@@ -1,0 +1,149 @@
+<extend name="common/layout"/>
+<block name="style">
+</block>
+<block name="main-top">
+    <form class="search-form" onkeydown="if(event.keyCode==13){return false;}"><a
+            href="{:url('admin/Menu/create',['pid'=>input('param.pid',0)])}" role="button" class="ui button blue small">新增</a>
+        <div class="ui action small input" id="search-input">
+            <input type="text" name="title" placeholder="搜索..." value="{:input('title')}" class="search-input">
+            <button class="ui button small blue" id="search" onclick="return false"
+                    url="{:url('admin/User/index')}">搜索
+            </button>
+        </div>
+    </form>
+</block>
+<block name="main-body">
+    <table class="ui table compact">
+        <thead>
+        <tr>
+            <th class="row-selected">
+                 <div class="ui checkbox">                    <input class="check-all" type="checkbox">                </div>
+            </th>
+            <th>id</th>
+            <th>名称</th>
+            <th>性别</th>
+            <th>邮箱</th>
+            <th>操作</th>
+        </tr>
+        </thead>
+        <tbody>
+        <notempty name="list.data">
+            <volist name="list.data" id="vo">
+                <tr>
+                    <td>
+                        <div class="ui checkbox mini">
+                            <input class="ids" type="checkbox" name="id[]" value="{$menu.id}">
+                        </div>
+                    </td>
+                    <td>{$vo.id}</td>
+                    <td>{$vo.name}</td>
+                    <td>{$vo.sex_text}</td>
+                    <td>{$vo.email}</td>
+                    <td>
+                        <a href="{:url('admin/User/edit',['id'=>$vo.id])}">编辑</a>
+                        <a href="#" class="user_disabled" data-url="{:url('admin/User/disabled')}"
+                           data-id="{$vo.id}" data-title="确认禁用" onclick="return false;">
+                            <if condition="$vo.status eq 1"><span>禁用</span><else/><span style="color: red">启用</span></if>
+                        </a>
+                    </td>
+                </tr>
+            </volist>
+            <else/>
+            <tr style="text-align: center">
+                <td colspan="10"> aOh! 暂时还没有内容!</td>
+            </tr>
+        </notempty>
+        </tbody>
+    </table>
+    <!-- 分页 -->
+    {$page}
+</block>
+<block name="script">
+    <script type="text/javascript">
+        $('.check-all').on('change', function () {
+            var obj = $(this);
+            if (obj.hasClass('checked')) {
+                $('.ids').each(function () {
+                    if (!$(this).hasClass('checked')) {
+                        $(this).click();
+                    }
+                });
+            } else {
+                $('.ids').each(function () {
+                    if ($(this).hasClass('checked')) {
+                        $(this).click();
+                    }
+                });
+            }
+        });
+        $(function () {
+            //搜索功能
+            $("#search").click(function () {
+                var url = $(this).attr('url');
+                var query = $('.search-form').serialize();
+                query = query.replace(/(&|^)(\w*?\d*?\-*?_*?)*?=?((?=&)|(?=$))/g, '');
+                query = query.replace(/^&/g, '');
+                if (url.indexOf('?') > 0) {
+                    url += '&' + query;
+                } else {
+                    url += '?' + query;
+                }
+                window.location.href = url;
+            });
+            //回车搜索
+            $(".search-input").keyup(function (e) {
+                if (e.keyCode === 13) {
+                    $("#search").click();
+                    return false;
+                }
+            });
+        });
+        //改变每页条数
+        $('#page_num').on('change', function () {
+            var query = $('.search-form').serialize();
+            var url = "{:url('admin/User/index')}";
+            var page_num = $(this).val();
+            query = query + '&page_num=' + page_num;
+            if (url.indexOf('?') > 0) {
+                url += '&' + query;
+            } else {
+                url += '?' + query;
+            }
+            window.location.href = url;
+
+        });
+        //跳转至多少页
+        $('#page_goto').on('change', function () {
+            var query = $('.search-form').serialize();
+            var url = "{:url('admin/User/index')}";
+            var page = $(this).val();
+
+            query = query + '&page=' + page;
+            if (url.indexOf('?') > 0) {
+                url += '&' + query;
+            } else {
+                url += '?' + query;
+            }
+            window.location.href = url;
+        });
+        $('.user_disabled').click(function () {
+            var id = $(this).attr('data-id');
+            var url = $(this).attr('data-url');
+            $.ajax({
+                url: url,
+                type: 'get',
+                data: { id: id },
+                success: function (data, status) {
+                    if (data.status == 1) {
+                        sAlert.success(data.info);
+                        setTimeout(reload(), 1500);
+                    } else {
+                        sAlert.error(data.info);
+                    }
+
+                }
+            });
+        })
+        highlight_subnav("{:request()->server('PHP_SELF')}");
+    </script>
+</block>

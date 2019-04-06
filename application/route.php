@@ -45,6 +45,10 @@ Route::get('/manager/:id/edit', 'admin/Manager/edit');
 Route::put('/manager/:id', 'admin/Manager/update');
 Route::delete('/manager', 'admin/Manager/delete');
 
+//用户管理
+Route::get('/user', 'admin/user/index');//用户列表
+Route::get('/user_disabled', 'admin/user/disabled');//用户禁用
+
 /**
  * 微信模块路由定义
  */

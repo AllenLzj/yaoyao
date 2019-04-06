@@ -13,7 +13,6 @@ class Admin extends Controller
      */
     protected function _initialize()
     {
-
         //判断是否登录
         if (!$this->isLogin()) {
             return $this->redirect('admin/Login/login');
