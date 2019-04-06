@@ -1,0 +1,27 @@
+<extend name="common/layout"/>
+<block name="style">
+</block>
+<block name="main-body">
+    <form method="post" class="ui form mini">
+        <div class="inline field">
+            <label>名称</label>
+            <input type="text"  name="name" value="{$manager.name}" readonly>
+        </div>
+        <div class="inline field">
+            <label>手机号</label>
+            <input type="text"  name="phone" value="{$manager.phone}" readonly>
+        </div> <div class="inline field">
+            <label>角色组</label>
+            <input type="text"  name="phone" value="{$manager.role_name}" readonly>
+        </div>
+        <div class="inline field">
+            <label>创建时间</label>
+            <input type="text" name="create_time" value="{$manager.create_time}" readonly>
+        </div>
+    </form>
+</block>
+<block name="script">
+    <script>
+        highlight_subnav("{:url('admin/Manager/index')}");
+    </script>
+</block>

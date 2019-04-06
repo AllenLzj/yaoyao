@@ -1,0 +1,1 @@
+<?php/** * Created by PhpStorm. * User: Allen.liu * Email cumt_wangmingxue@126.com * Date: 17/12/15 * Time: 15:47 */phpinfo();

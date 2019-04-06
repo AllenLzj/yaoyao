@@ -1,0 +1,41 @@
+<extend name="common/layout"/>
+<block name="style">
+</block>
+<block name="main-body">
+    <form class="ui form mini">
+        <div class="inline field">
+            <label>姓名</label>
+            <input type="text"  name="name" value="">
+        </div>
+        <div class="inline field">
+            <label>电话</label>
+            <input type="text"  name="phone" value="">
+        </div>
+        <div class="inline field">
+            <label>角色组</label>
+            <select name="role_id" id="role_id" class="ui dropdown">
+                <volist name="roles" id="role">
+                    <option value="{$role.id}">{$role.name}</option>
+                </volist>
+            </select>
+        </div>
+        <div class="inline field">
+            <label>密码</label>
+            <input type="password"  name="password" value="">
+        </div>
+        <div class="inline field">
+            <label>确认密码</label>
+            <input type="password"  name="password_confirm" value="">
+        </div>
+        <div class="inline field">
+            <label></label>
+            <button class="ui button ajax-post mini positive" onclick="return false;" data-url="{:url('admin/Manager/save')}">确定</button>
+            <button class="ui button mini" onclick="history.back(-1);return false;">返回</button>
+        </div>
+    </form>
+</block>
+<block name="script">
+    <script>
+        highlight_subnav("{:url('admin/Manager/index')}");
+    </script>
+</block>

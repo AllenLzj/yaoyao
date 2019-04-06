@@ -1,0 +1,98 @@
+<extend name="common/layout"/>
+<block name="style">
+</block>
+<block name="main-body">
+    <form method="post" class="ui form mini">
+        <div class="inline field">
+            <label>标题</label>
+            <input type="text" name="title" placeholder="用于后台显示的配置标题" value="{$menu_present.title}">
+        </div>
+        <div class="inline field">
+            <label>排序</label>
+            <input type="text" name="sort" placeholder="用于分组显示的顺序" value="{$menu_present.sort}">
+        </div>
+        <div class="inline field">
+            <label>链接</label>
+            <input type="text" name="url" placeholder="url函数解析的controller/action" value="{$menu_present.url}">
+        </div>
+        <div class="inline field">
+            <label>Icon类名</label>
+            <input type="text" class="text" name="class_name" placeholder="Icon对应的类名"
+                   value="{$menu_present.class_name}">
+        </div>
+        <div class="inline fields">
+            <label>隐藏</label>
+            <div class="field">
+                <div class="ui radio checkbox">
+                    <input type="radio" name="hide" tabindex="0" value="1"
+                    <if condition="$menu_present.hide eq 1">checked</if>
+                    >
+                    <label>是</label>
+                </div>
+            </div>
+            <div class="field">
+                <div class="ui radio checkbox">
+                    <input type="radio" name="hide" tabindex="0" value="0"
+                    <if condition="$menu_present.hide eq 0">checked</if>
+                    >
+                    <label>否</label>
+                </div>
+            </div>
+        </div>
+        <div class="inline fields">
+            <label>仅开发者模式可见</label>
+            <div class="field">
+                <div class="ui radio checkbox">
+                    <input type="radio" name="is_dev" tabindex="0" value="1"
+                    <if condition="$menu_present.is_dev eq 1">checked</if>
+                    >
+                    <label>是</label>
+                </div>
+            </div>
+            <div class="field">
+                <div class="ui radio checkbox">
+                    <input type="radio" name="is_dev" tabindex="0" value="0"
+                    <if condition="$menu_present.is_dev eq 0">checked</if>
+                    >
+                    <label>否</label>
+                </div>
+            </div>
+        </div>
+        <div class="inline field">
+            <label>父级菜单</label>
+            <select class="ui dropdown search" name="pid">
+                <option value="">请选择父级菜单</option>
+                <option value="0"
+                <if condition="$menu_present.pid eq 0">selected</if>
+                >无</option>
+                <volist name="menus" id="menu">
+                    <option value="{$menu.id}"
+                    <if condition="$menu_present.pid eq $menu.id">selected</if>
+                    >一级：{$menu.title}</option>
+                    <volist name="menu.child" id="item">
+                        <option value="{$item.id}"
+                        <if condition="$menu_present.pid eq $item.id">selected</if>
+                        >二级：{$item.title}</option>
+                    </volist>
+                </volist>
+            </select>
+        </div>
+        <div class="inline field">
+            <label>说明</label>
+            <input type="text" class="text" name="tip" placeholder="菜单详细说明" value="{$menu_present.tip}">
+            <!--<textarea name="" id="" cols="30" rows="10"></textarea>-->
+        </div>
+        <div class="inline field">
+            <label></label>
+            <button class="ui button ajax-put mini positive" id="submit" onclick="return false;"
+                    data-url="{:url('admin/Menu/update',['id'=>$menu_present.id])}">确定
+            </button>
+            <button class="ui button mini" onclick="history.back(-1);return false;">返回</button>
+        </div>
+    </form>
+</block>
+<block name="script">
+    <script>
+        highlight_subnav("{:request()->server('PHP_SELF')}");
+    </script>
+</block>

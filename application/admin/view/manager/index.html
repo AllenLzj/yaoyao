@@ -1,0 +1,128 @@
+<extend name="common/layout"/>
+<block name="style">
+</block>
+<block name="main-top">
+    <form class="search-form" onkeydown="if(event.keyCode==13){return false;}"><a href="{:url('admin/Manager/create')}"
+                                                                                  manager="button"
+                                                                                  class="ui button blue small">新增</a>
+        <button class="small ui button ajax-delete-many negative" data-url="{:url('admin/Manager/delete')}" onclick="return false;" data-title="确认删除管理员">删 除
+        </button>
+        <div class="ui action small input" id="search-input">
+            <input type="text" name="name" placeholder="搜索..." class="search-input" value="{:input('name')}">
+            <button class="ui button small blue" id="search" onclick="return false" url="{:url('admin/Manager/index')}">
+                搜索
+            </button>
+        </div>
+    </form>
+</block>
+<block name="main-body">
+    <div class="ui form">
+    </div>
+    <table class="ui table compact">
+        <thead>
+        <tr>
+            <th class="row-selected">
+                 <div class="ui checkbox">                    <input class="check-all" type="checkbox">                </div>
+            </th>
+            <th>姓名</th>
+            <th>电话</th>
+            <th>角色组</th>
+            <th>创建时间</th>
+            <th>操作</th>
+        </tr>
+        </thead>
+        <tbody>
+        <notempty name="managers">
+            <volist name="managers" id="manager">
+                <tr>
+                    <td>
+                        <div class="ui checkbox mini">
+                            <input class="ids" type="checkbox" name="id[]" value="{$manager.id}">
+                        </div>
+                    </td>
+                    <td>
+                        <a href="{:url('admin/Manager/read',['id'=>$manager.id])}">{$manager.name}</a>
+                    </td>
+                    <td>
+                        {$manager.phone}
+                    </td>
+                    <td>
+                        {$manager.role_name}
+                    </td>
+                    <td>{$manager.create_time}</td>
+                    <td>
+                        <a href="{:url('admin/Manager/edit',['id'=>$manager.id])}">编辑</a>
+                        <a href="{:url('admin/Manager/read',['id'=>$manager.id])}">详情</a>
+                        <a href="javascript:void(0)" class="ajax-delete-one" data-url="{:url('admin/Manager/delete')}"
+                           data-title="删除管理员" data-id="{$manager.id}" onclick="return false;">删除</a>
+                    </td>
+                </tr>
+            </volist>
+            <else/>
+            <tr style="text-align: center">
+                <td colspan="10"> aOh! 暂时还没有内容!</td>
+            </tr>
+        </notempty>
+        </tbody>
+    </table>
+    <!-- 分页 -->
+    {$managers->render()}
+</block>
+<block name="script">
+    <script type="text/javascript">
+        $(function () {
+
+            $(function () {
+                //搜索功能
+                $("#search").click(function () {
+                    var url = $(this).attr('url');
+                    var query = $('.search-form').serialize();
+                    query = query.replace(/(&|^)(\w*?\d*?\-*?_*?)*?=?((?=&)|(?=$))/g, '');
+                    query = query.replace(/^&/g, '');
+                    if (url.indexOf('?') > 0) {
+                        url += '&' + query;
+                    } else {
+                        url += '?' + query;
+                    }
+                    window.location.href = url;
+                });
+                //回车搜索
+                $(".search-input").keyup(function (e) {
+                    if (e.keyCode === 13) {
+                        $("#search").click();
+                        return false;
+                    }
+                });
+            });
+            //改变每页条数
+            $('#page_num').on('change', function () {
+                var query = $('.search-form').serialize();
+                var url = "{:url('admin/Manager/index',['pid'=>input('pid')])}";
+                var page_num = $(this).val();
+                query = query + '&page_num=' + page_num;
+                if (url.indexOf('?') > 0) {
+                    url += '&' + query;
+                } else {
+                    url += '?' + query;
+                }
+                window.location.href = url;
+
+            });
+            //跳转至多少页
+            $('#page_goto').on('change', function () {
+                var query = $('.search-form').serialize();
+                var url = "{:url('admin/Manager/index',['pid'=>input('pid')])}";
+                var page = $(this).val();
+
+                query = query + '&page=' + page;
+                if (url.indexOf('?') > 0) {
+                    url += '&' + query;
+                } else {
+                    url += '?' + query;
+                }
+                window.location.href = url;
+            });
+        });
+        highlight_subnav("{:request()->server('PHP_SELF')}");
+    </script>
+</block>

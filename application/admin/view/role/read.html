@@ -1,0 +1,26 @@
+<extend name="common/layout"/>
+<block name="style">
+</block>
+<block name="main-body">
+    <form method="post" class="ui form mini">
+        <div class="inline field">
+            <label>名称</label>
+            <input type="text"  name="name" value="{$role.name}" readonly>
+        </div>
+        <div class="inline field">
+            <label>排序</label>
+            <input type="text"  name="description" value="{$role.description}" readonly>
+        </div>
+        <div class="inline field">
+            <label>创建时间</label>
+            <input type="text" name="create_time" value="{$role.create_time}" readonly>
+        </div>
+    </form>
+</block>
+<block name="script">
+    <script>
+        $(function(){
+            highlight_subnav("{:url('admin/Role/index')}");
+        });
+    </script>
+</block>

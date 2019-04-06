@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1">
+    <title>欢迎您登录嘉琪珠宝管理系统</title>
+    <link rel="stylesheet" type="text/css" href="__STATIC__/SemanticUI/semantic.min.css" media="all">
+    <link rel="stylesheet" type="text/css" href="__STATIC__/toastr/toastr.min.css" media="all">
+    <link rel="stylesheet" type="text/css" href="__STATIC__/Admin/css/common.css" media="all">
+</head>
+<body><include file="common/reloadTag" />
+    <!-- 标题栏 -->
+    <div class="search-form">
+        <!--<button type="button" class="ui button mini backup">添加备份</button>-->
+        <a class="backup" onclick="return false;">添加备份</a>
+        <a id="optimize" href="{:url('optimize')}">优化表</a>
+        <a id="repair" href="{:url('repair')}">修复表</a>
+    </div>
+    <!-- 应用列表 -->
+    <div class="list-table">
+        <form id="export-form" method="post" action="{:url('export')}">
+            <table class="ui table compact striped">
+                <thead>
+                    <th>
+                         <div class="ui checkbox">
+                        <input checked="checked" type="checkbox" value="">
+                        </div>
+                    </th>
+                    <th>表名</th>
+                    <th>数据量</th>
+                    <th>数据大小</th>
+                    <th>创建时间</th>
+                    <th>备份状态</th>
+                    <th>操作</th>
+                </tr>
+                </thead>
+                <tbody>
+                <volist name="list" id="table">
+                    <tr>
+                        <td class="num">
+                            <div class="ui checkbox ids">
+                                <input checked="checked" type="checkbox" name="tables[]" value="{$table.name}">
+                            </div>
+                        </td>
+                        <td>{$table.name}</td>
+                        <td>{$table.rows}</td>
+                        <td>{$table.data_length|format_bytes}</td>
+                        <td>{$table.create_time}</td>
+                        <td class="info">未备份</td>
+                        <td class="action">
+                            <a class="ajax-get" data-url="{:url('optimize?tables='.$table['name'])}"
+                                    onclick="return false">优化表
+                            </a>&nbsp;
+                            <a class="ajax-get" data-url="{:url('repair?tables='.$table['name'])}"
+                                    onclick="return false">修复表
+                            </a>
+                        </td>
+                    </tr>
+                </volist>
+                </tbody>
+            </table>
+        </form>
+    </div>
+    <script type="text/javascript" src="__STATIC__/jquery-3.2.1.min.js"></script>
+    <script type="text/javascript" src="__STATIC__/SemanticUI/semantic.min.js"></script>
+    <script type="text/javascript" src="__STATIC__/toastr/toastr.min.js"></script>
+    <script type="text/javascript" src="__STATIC__/Admin/js/common.js"></script>
+    <script type="text/javascript">
+        (function ($) {
+            var $form = $("#export-form"), $export = $("#export"), tables;
+            $optimize = $("#optimize"), $repair = $("#repair");
+
+            $optimize.add($repair).click(function () {
+                $.post(this.href, $form.serialize(), function (data) {
+                    if (data.status) {
+                        toastr.success(data.info);
+                    } else {
+                        toastr.error(data.info);
+                    }
+                    setTimeout(function () {
+                        $('#top-alert').find('button').click();
+                    }, 1500);
+                }, "json");
+                return false;
+            });
+
+            $('.backup').click(function () {
+                var name = $('form').serialize();
+                var tp = 'backup';
+                var data=name+'&tp='+tp;
+                $.post("{:url('bak')}", data, function (response) {
+                    if (response) {
+                        toastr.success(response.info);
+                    } else {
+                        toastr.error(response.info);
+                    }
+                }, 'json');
+            });
+            $('.checkbox').checkbox();
+
+
+        })(jQuery);
+
+
+    </script>
+</body>
+</html>

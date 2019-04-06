@@ -1,0 +1,170 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1">
+    <title>{$title}</title>
+    <link rel="stylesheet" type="text/css" href="__STATIC__/SemanticUI/semantic.min.css" media="all">
+    <link rel="stylesheet" type="text/css" href="__STATIC__/Admin/css/layout.css" media="all">
+    <link rel="stylesheet" type="text/css" href="__STATIC__/sweetalert/sweetalert.min.css" media="all">
+    <link rel="stylesheet" type="text/css" href="__STATIC__/datetimepicker/css/datetimepicker.css" media="all">
+    <link rel="stylesheet" type="text/css"  href="__STATIC__/datetimepicker/css/dropdown.css" media="all">
+    <block name="style">
+
+    </block>
+</head>
+
+<body>
+<div class="ui left vertical inverted sidebar labeled icon menu accordion visible">
+    <a class="item logo">
+        <!--<i class="stack overflow icon"></i>-->
+        <img src="__STATIC__/Admin/image/new_logo.png" alt="">
+        <span class="menu-name">邀伴儿后台管理系统</span>
+    </a>
+    <volist name="MENU_LIST" id="menu">
+        <a class="item title">
+            <i class="small {$menu.class_name}"></i>
+            <span class="menu-name">{$menu.title}</span>
+            <span class="menu-chevron"><i class="chevron down icon"></i></span>
+        </a>
+        <div class="content">
+            <div class="ui list">
+                <volist name="$menu.child" id="item">
+                    <a class="item" href="{:url($item['module_name'].'/'.$item['url'])}">{$item.title}</a>
+                </volist>
+            </div>
+        </div>
+    </volist>
+
+</div>
+<!--顶部导航-->
+<div class="ui fixed menu top top-nav">
+    <a class="item side-hide">
+        <i class="arrow left icon"></i>
+    </a>
+    <div class="menu right" style="margin-right: 260px">
+        <!-- 用户栏 -->
+        <div class="ui dropdown item">
+            <div class="item-content">
+                <i class="block user icon"></i>
+                <span class="item-title">{:session('admin_info.name')}</span>
+            </div>
+            <div class="menu">
+                <div class="item left floated" style="width: 100%">个人中心</div>
+                <div class="item left floated change-password" style="width: 100%"
+                     data-url="{:url('admin/Admin/pass')}">
+                    <i class="icon edit"></i>
+                    <span style="color: #4183C4">修改密码</span>
+                </div>
+                <div class="item left floated logout" data-url="{:url('admin/Login/logout')}" style="width: 100%">
+                    <i class="sign out icon"></i>
+                    <span style="color: #4183C4">退出</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="pusher">
+    <!--面包屑导航-->
+    <div class="ui breadcrumb large">
+        <a class="section">{$BREAD_CRUMB.parent_name}</a>
+        <div class="divider"> /</div>
+        <div class="active section">{$BREAD_CRUMB.menu.title}</div>
+    </div>
+
+    <div class="main-top">
+        <block name="main-top">
+
+        </block>
+    </div>
+    <div class="main-body">
+        <block name="main-body">
+
+        </block>
+    </div>
+    <div class="main-footer">
+        <block name="main-footer">
+            <p>Copyright © 杭州经济技术开发区资产经营集团有限公司&nbsp;&nbsp;&nbsp;&nbsp;浙ICP备09091811号</p>
+        </block>
+    </div>
+</div>
+</body>
+
+<!--[if lt IE 9]>
+<script type="text/javascript" src="__STATIC__/jquery-1.10.2.min.js"></script>
+<![endif]-->
+<!--[if gte IE 9]><!-->
+<script type="text/javascript" src="__STATIC__/jquery-3.2.1.min.js"></script>
+<!--<![endif]-->
+<script type="text/javascript" src="__STATIC__/SemanticUI/semantic.min.js"></script>
+<script type="text/javascript" src="__STATIC__/sweetalert/sweetalert.min.js"></script>
+<!--<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>-->
+<script type="text/javascript" src="__STATIC__/template-web.js"></script>
+<script type="text/javascript" src="__STATIC__/blockUi/jquery.blockUI.js"></script>
+<script type="text/javascript" src="__STATIC__/Admin/js/common.js"></script>
+<script type="text/javascript">
+    //页码默认选中
+    var page_num = "{:input('page_num')}";
+    $('#page_num').find('option').each(function(){
+        if($(this).val()==page_num){
+            $(this).attr('selected',true);
+        }
+    });
+    $('.ui.labeled.icon.sidebar').sidebar({
+        dimPage: false,
+        closable: false,
+        onVisible: function () {
+//            console.log('22222');
+        }
+    }).sidebar('show');
+    $('.accordion').accordion({
+        onOpening: function () {
+            $(this).siblings('.title').find('.up').removeClass('up').addClass('down');
+            $(this).prev('.title').find('.down').removeClass('down').addClass('up');
+        },
+        onClosing: function () {
+            $(this).prev('.title').find('.up').removeClass('up').addClass('down');
+        },
+    });
+    //初始化下拉框
+    $('.dropdown').dropdown({on: 'hover'});
+    //初始化多选框
+    $('.checkbox').checkbox();
+
+    //隐藏侧边栏
+    $('.side-hide').on('click', function (e) {
+        if ($(this).hasClass('side-show')) {
+            $('.ui.labeled.icon.sidebar').sidebar({
+                dimPage: false,
+                closable: false,
+            }).sidebar('show');
+            $(this).removeClass('side-show').removeClass('active').addClass('side-hide');
+            $(this).find('.right').removeClass('right').addClass('left');
+            $('.pusher').css({'margin-right': '260px'});
+            $('.top-nav .menu.right').css({'margin-right': '260px'});
+
+        } else {
+            $('.pusher').css({'margin-right': '0'});
+            $('.top-nav .menu.right').css({'margin-right': '0'});
+            $('.ui.labeled.icon.sidebar').sidebar({
+                dimPage: false,
+                closable: false,
+            }).sidebar('toggle');
+            $(this).removeClass('side-hide').removeClass('active').addClass('side-show');
+            $(this).find('.left').removeClass('left').addClass('right');
+        }
+
+    });
+    //修改密码
+    $('.change-password').on('click', function () {
+        window.location.href = $(this).attr('data-url');
+    });
+    //退出登陆
+    $('.logout').on('click', function () {
+        window.location.href = $(this).attr('data-url');
+    });
+
+</script>
+<block name="script"></block>
+</body>
+</html>

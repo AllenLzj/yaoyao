@@ -1,0 +1,61 @@
+<extend name="common/layout"/>
+<block name='style'>
+</block>
+<block name="main-body">
+    <form class="ui form" onsubmit="return false">
+        <div class="field" style="text-align: center;">
+            <input type="hidden" name="type" value="remind">
+           <h3 class="ui header">考核提醒消息频次</h3>
+            <div class="ui checkbox">
+                <input type="checkbox" class="status" <if condition="!empty($data)"> <if condition="in_array(1,$data)">checked</if> </if> name="example[]" value="1">
+                <label>考核发起</label>
+            </div>
+            <div class="ui checkbox">
+                <input type="checkbox" class="status" <if condition="!empty($data)">  <if condition="in_array(2,$data)">checked</if> </if>  name="example[]" value="2">
+                <label>考核截止前3天</label>
+            </div>
+            <div class="ui checkbox">
+                <input type="checkbox" class="status" <if condition="!empty($data)">  <if condition="in_array(3,$data)">checked</if> </if> name="example[]" value="3">
+                <label>考核截止当天</label>
+            </div>
+        </div>
+        
+        <div class="field" style="text-align: center;padding-top:30px ">
+            <button class="ui red button" id="sub" disabled type="submit">提交</button>
+        </div>
+        
+    </form>
+</block>
+<block name="script">
+    <script type="text/javascript">
+        $('.status').change(function(){
+            $('#sub').removeAttr('disabled');
+
+        })
+
+        $('#sub').click(function () {
+            var data = $('.ui.form').serialize();
+            $.ajax({
+                url: "{:url('admin/Configure/doit')}",
+                data: data,
+                method: 'post',
+                dataType: 'json',
+                success: function (data) {
+                    if (data.status == 1) {
+                        $('#sub').attr('disabled','disabled');
+                        sAlert.success(data.info)
+                    } else {
+                        sAlert.error(data.info)
+                    }
+                },
+                error: function () {
+                    sAlert('网络错误！');
+                }
+            });
+        })
+
+
+        //导航高亮
+        highlight_subnav("{:request()->server('PHP_SELF')}");
+    </script>
+</block>

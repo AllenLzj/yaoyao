@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1">
+    <title>欢迎您登录嘉琪珠宝管理系统</title>
+    <link rel="stylesheet" type="text/css" href="__STATIC__/SemanticUI/semantic.min.css" media="all">
+    <link rel="stylesheet" type="text/css" href="__STATIC__/toastr/toastr.min.css" media="all">
+    <link rel="stylesheet" type="text/css" href="__STATIC__/Admin/css/common.css" media="all">
+</head>
+<body><include file="common/reloadTag" />
+<!-- 标题栏 -->
+<div class="search-form">
+    <a onclick="handle('backup')">添加备份</a>
+</div>
+<!-- 应用列表 -->
+<div class="list-table">
+    <form id="export-form" method="post" action="{:url('export')}">
+        <table class="ui table compact striped">
+            <thead>
+            <tr>
+                <th>序号</th>
+                <th>备份名称</th>
+                <th>备份时间</th>
+                <th>备份大小</th>
+                <th>操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            <notempty name="list">
+                <volist name="list" id="vo">
+                    <tr>
+                        <th scope="row">{$key}</th>
+                        <td>{$vo['name']}</td>
+                        <td>{$vo['time']}</td>
+                        <td>{$vo['size']}</td>
+                        <td>
+                            <a class="positive " href="{:url('bak',['tp'=>'dowonload','name'=>$vo.name])}">下载</a>
+                            <a class="orange" onclick="handle('restore','{$vo.name}')">还原</a>
+                            <a class="negative" onclick="handle('del','{$vo.name}')">删除</a>
+                        </td>
+                    </tr>
+                </volist>
+            </notempty>
+            </tbody>
+        </table>
+    </form>
+</div>
+<!-- /应用列表 -->
+<script type="text/javascript" src="__STATIC__/jquery-3.2.1.min.js"></script>
+<script type="text/javascript" src="__STATIC__/SemanticUI/semantic.min.js"></script>
+<script type="text/javascript" src="__STATIC__/toastr/toastr.min.js"></script>
+<script type="text/javascript" src="__STATIC__/Admin/js/common.js"></script>
+<script type="text/javascript">
+    function handle(tp, name='') {
+        if (tp) {
+            $.post("{:url('bak')}", {tp: tp, name: name}, function (response) {
+                if (response) {
+                    toastr.success(response.info);
+                    if (tp == 'del' || tp == 'backup') {
+                        function reload() {
+                            location.reload()
+                        }
+
+                        setTimeout(reload, 1000);
+                    }
+                } else {
+                    toastr.error(response.info);
+                }
+
+            });
+        }
+    }
+</script>
+</body>
+</html>
