@@ -55,4 +55,47 @@ class User extends Admin
 
         }
     }
+
+    public function create()
+    {
+        $this->assign('title', '新增用户');
+        return $this->fetch('', compact('title'));
+    }
+    public function save(Request $request)
+    {
+        $data = $request->param();
+        $validate_result = $this->validate($data, 'User');
+        if (true !== $validate_result) {
+            return array('info' => $validate_result, 'status' => 0);
+        }
+        $data['password'] = think_admin_md5($data['password'], UC_AUTH_KEY);
+        $res = db('user')->insert($data);
+        if($res){
+            return ['info' => '新增成功！', 'status' => 1, 'target' => 'back'];
+        }else{
+            return ['info' => '新增失败', 'status' => 0];
+        }
+    }
+    public function edit()
+    {
+        $id = input('id');
+        $info = db('user')->where('id',$id)->find();
+        $this->assign('title', '新增用户');
+        return $this->fetch('', compact('title','info'));
+    }
+    public function update(Request $request)
+    {
+        $data = $request->param();
+        $validate_result = $this->validate($data, 'User');
+        if (true !== $validate_result) {
+            return array('info' => $validate_result, 'status' => 0);
+        }
+        $data['password'] = think_admin_md5($data['password'], UC_AUTH_KEY);
+        $res = db('user')->update($data);
+        if($res){
+            return ['info' => '保存成功！', 'status' => 1, 'target' => 'back'];
+        }else{
+            return ['info' => '保存失败', 'status' => 0];
+        }
+    }
 }

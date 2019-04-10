@@ -10,12 +10,13 @@ use think\Route;
 
 //菜单相关
 Route::get('/navbar', 'admin/Menu/navbar');
+Route::get('/', 'admin/Role/index');
 Route::get('/sidebar', 'admin/Menu/sidebar');
 Route::get('/password', 'admin/Admin/pass');//修改密码
 Route::post('/password', 'admin/Admin/passSave');//修改密码
 
 Route::get('/menu/[:pid]', 'admin/Menu/index');
-Route::get('/menu/:id', 'admin/Menu/read');
+//Route::get('/menu/:id', 'admin/Menu/read');
 Route::get('/menu/create/:pid', 'admin/Menu/create');
 Route::post('/menu', 'admin/Menu/save');
 Route::get('/menu/:id/edit', 'admin/Menu/edit');
@@ -47,6 +48,10 @@ Route::delete('/manager', 'admin/Manager/delete');
 
 //用户管理
 Route::get('/user', 'admin/user/index');//用户列表
+Route::get('/user_add', 'admin/user/create');//新增用户
+Route::post('/user_save', 'admin/user/save');//新增用户
+Route::get('/user_edit/:id', 'admin/user/edit');//编辑用户
+Route::post('/user_update', 'admin/user/update');//更新用户
 Route::get('/user_disabled', 'admin/user/disabled');//用户禁用
 
 /**
