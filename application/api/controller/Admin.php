@@ -13,8 +13,6 @@ class Admin extends Controller
      */
     protected function _initialize()
     {
-        send_mail('693021325@qq.com','激活账号','申请账号成功，等待激活！','验证码66666',"");
-            echo 44;die;
         //判断是否登录
         if (!$this->isLogin()) {
             return $this->redirect('admin/Login/login');

@@ -1250,50 +1250,30 @@ function check_category_model($info)
 /**
  * 邮件发送函数
  */
-function sendMail($to, $title, $content)
-{
-    Vendor('PHPMailer.PHPMailer');
-    $mail = new \vendor\PHPMailer\PHPMailer(); // 实例化
-    $mail->IsSMTP(); // 启用SMTP
-    $mail->Host = C('MAIL_HOST'); // smtp服务器的名称（这里以QQ邮箱为例）
-    $mail->SMTPAuth = true; // 启用smtp认证
-    $mail->Username = C('MAIL_USERNAME'); // 你的邮箱名
-    $mail->Password = C('MAIL_PASSWORD'); // 邮箱密码
-    $mail->From = C('MAIL_FROM'); // 发件人地址（也就是你的邮箱地址）
-    $mail->FromName = C('MAIL_FROMNAME'); // 发件人姓名
-    $mail->AddAddress($to, "尊敬的客户");
-    $mail->WordWrap = 50; // 设置每行字符长度
-    $mail->IsHTML(TRUE); // 是否HTML格式邮件
-    $mail->CharSet = 'utf-8'; // 设置邮件编码
-    $mail->Subject = $title; // 邮件主题
-    $mail->Body = $content; // 邮件内容
-    $mail->AltBody = "这是一个纯文本的身体在非营利的HTML电子邮件客户端"; // 邮件正文不支持HTML的备用显示
-    return ($mail->Send());
-}
-
-/* 登录购物车处理函数 ,会员模型函数 */
-function addintocart($uid)
-{
-    $table = M("shopcart");
-    $cart = $_SESSION["cart"];
-    foreach ($cart as $k => $val) {
-        $id = $val["id"];
-        $parameters = $val["parameters"];
-        $sort = $val["sort"];
-        $num = M("shopcart")->where("goodid='$id' and uid='$uid 'and parameters='$parameters'")->getField("num");
-        if ($num) {
-            $table->num = $val["num"] + $num;
-            $table->where("goodid='$id' and uid='$uid 'and parameters='$parameters'")->save();
-        } else {
-            $table->goodid = $id;
-            $table->price = $val["price"];
-            $table->parameters = $parameters;
-            $table->sort = $sort;
-            $table->uid = $uid;
-            $table->num = $val["num"];
-            $table->add();
+function send_mail($tomail, $name, $subject = '', $body = '', $attachment = null) {
+    $mail = new \PHPMailer\PHPMailer\PHPMailer();         //实例化PHPMailer对象
+    $mail->CharSet = 'UTF-8';           //设定邮件编码，默认ISO-8859-1，如果发中文此项必须设置，否则乱码
+    $mail->IsSMTP();                    // 设定使用SMTP服务
+    $mail->SMTPDebug = 0;               // SMTP调试功能 0=关闭 1 = 错误和消息 2 = 消息
+    $mail->SMTPAuth = true;             // 启用 SMTP 验证功能
+    $mail->SMTPSecure = 'ssl';          // 使用安全协议
+    $mail->Host = "smtp.qq.com"; // SMTP 服务器
+    $mail->Port = 465;                  // SMTP服务器的端口号
+    $mail->Username = "693021325@qq.com";    // SMTP服务器用户名
+    $mail->Password = "jehxxvjquylxbehi";     // SMTP服务器密码
+    $mail->SetFrom('693021325@qq.com', 'Allen.liu');
+    $replyEmail = '';                   //留空则为发件人EMAIL
+    $replyName = '';                    //回复名称（留空则为发件人名称）
+    $mail->AddReplyTo($replyEmail, $replyName);
+    $mail->Subject = $subject;
+    $mail->MsgHTML($body);
+    $mail->AddAddress($tomail, $name);
+    if (is_array($attachment)) { // 添加附件
+        foreach ($attachment as $file) {
+            is_file($file) && $mail->AddAttachment($file);
         }
     }
+    return $mail->Send() ? true : $mail->ErrorInfo;
 }
 
 /* 记录登录历史信息 ,会员模型函数 */
@@ -1463,24 +1443,7 @@ function get($url, $param = array())
     return $rst;
 }
 
-//批量发送短信接口
-//$type=base 表示必须要用短信接口
-//$type=senior 表示可用可不用短信接口
-function smsend($tels, $content, $type = 'base')
-{
-    $param = array(
-        "account" => config('sms_account'),
-        "password" => config('sms_password'),
-        "tels" => $tels,
-        "content" => $content
-    );
-    if (empty($tels) || empty($content)) {
-        return false;
-    } else {
-        $return_msg = get('http://sms.woliucloud.com/sms/Msg/send', $param);
-        return $return_msg;
-    }
-}
+
 
 /**
  * 根据数组key删除元素
@@ -1547,76 +1510,7 @@ function think_admin_md5($str, $key = 'ThinkUCenter')
     return '' === $str ? '' : md5(sha1($str) . $key);
 }
 
-/*
- * 发送模板消息
- */
-function templatesend($touser, $template_id, $url2, $data2)
-{
-    $accessToken = getAccessToken();
-    $url = 'https://api.weixin.qq.com/cgi-bin/message/template/send?access_token=' . $accessToken;
-    $data = array(
-        'touser' => $touser,
-        'template_id' => $template_id,
-        'url' => $url2,
-        'data' => $data2
-    );
-    $data = json_encode($data);
-    $res = curlHelp($url, urldecode($data));
 
-    $res = json_decode($res, true);
-    return $res;
-}
-
-//本地读取token
-function getAccessToken()
-{
-    $webroot = $_SERVER['DOCUMENT_ROOT'];
-
-    //去微信获取，然后保存
-    $token_path = $webroot . '/WxToken';
-
-    if (!is_dir($token_path)) {
-        mkdir($token_path, 0777, 1);
-    }
-
-    $token_save_file = $token_path . '/token.json';
-
-    if (file_exists($token_save_file)) {     //如果Token文件存在
-        $get_local_token = file_get_contents($token_save_file);
-        $token_array = json_decode($get_local_token, true);
-        //判断本地的weixin_token是否存在
-        if (!is_array($token_array) || !isset($token_array['get_token_time'])) {
-            //去微信获取，然后保存
-            $token_array = getATRemote($token_save_file);
-        } else {
-            //判断 当前时间 减去 本地获取微信token的时间 大于7000秒 ,就要重新获取
-            if (time() - $token_array['get_token_time'] > 7000) {
-                $token_array = getATRemote($token_save_file);
-            }
-        }
-    } else {
-        $token_array = getATRemote($token_save_file);
-    }
-
-    return $token_array['access_token'];
-}
-
-//远程读取token
-function getATRemote($token_save_file)
-{
-    $APPID = config('WEIXIN_APPID');
-    $SECRET = config('WEIXIN_APPSECRET');
-
-    $url = sprintf("https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=%s&secret=%s", $APPID, $SECRET);
-
-    $res = curlHelp($url);
-
-    $TOKEN_json = json_decode($res, true);
-    $TOKEN_json['get_token_time'] = time();
-
-    file_put_contents($token_save_file, json_encode($TOKEN_json));
-    return $TOKEN_json;
-}
 
 //远程抓取文件
 function curlHelp($url, $post_data = '')
