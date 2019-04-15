@@ -13,129 +13,78 @@ header('Access-Control-Allow-Origin:*');
 
 class Reg extends ApiBase
 {
-
-    /**
-     * User: WangMingxue
-     * Email cumt_wangmingxue@126.com
-     * tp5发送邮件
-     */
-    public function sendEmail() {
-        $email = input('email',null);
+    public function sendEmail($email = null) {
         $user = db('user')->where(['email'=>$email])->find();
-        if(empty($user)) return ['info'=>'用户不存在！','status'=>0];
+        if($user) $this->wrong(601, '该邮箱已经注册用户');
+        $date = date('Y-m-d H:i:s');
+        $expiration_time = date('Y-m-d H:i:s',strtotime('+10 minute'));
         $name='邀伴儿新用户注册';
         $subject='邀伴儿验证码';
         if (check_email($email)) {
             $content_num = rand_num(6);
-            $content = '您的邀伴儿验证码为：' . $content_num . ",请在10分钟内完成注册";
+            $content = '您的邀伴儿验证码为：' . $content_num . ",请在10分钟内完成操作";
             if (send_mail($email,$name,$subject,$content) == true) {
-                $redis = new Redis();
-                $redis->set($email, $content_num, 'EX', 600);
-                return ['info'=>'验证码发送成功！','status'=>1];
+                $email_code = db('email_code')->where('email',$email)->count();
+                if($email_code){
+                    db('email_code')->where('email',$email)->update(['code'=>$content_num,'expiration_time'=>$expiration_time]);
+                }else{
+                    db('email_code')->insert(['code'=>$content_num,'email'=>$email,'expiration_time'=>$expiration_time,'create_time'=>$date]);
+                }
+                $this->wrong(200, '验证码发送成功');
             } else {
-                return ['info'=>'用户不存在！','status'=>0];
+                $this->wrong(601, '验证码发送失败');
             }
         } else {
-            return ['info'=>'邮箱格式错误！','status'=>0];
+            $this->wrong(601, '邮箱格式错误');
         }
     }
+
     public function save(Request $request)
     {
-        $data = $request->except(['sign', 'timestamp', 'access_token']);
-        $token = input('access_token','');
-        $validate_result = $this->validate($data, 'Reg');
-        if ($validate_result !== true) {
-            $this->wrong(401, $validate_result);
-        }
-        //验证验证码
-        $redis = new Redis();
-        if (!$redis->exists($data['phone'])) {
-            $this->wrong(601, lang('illegal cell phone number'));
-        }
-        if ($redis->get($data['phone']) != $data['code']) {
-            $this->wrong(602, lang('verification code error'));
-        }
-        $user_model = new Users();
+        $date = date('Y-m-d H:i:s');
+        $data = $request->only(['email', 'code']);
+        $is_code = db('email_code')->where(['email'=>$data['email'],'expiration_time'=>['egt',$date]])->find();
+        if(empty($is_code) || $data['code'] == $is_code) $this->wrong(601, '验证码错误');
+        $user = [
+            'email' => $data['email'],
+            'password' => think_admin_md5('123456', UC_AUTH_KEY),
+            'last_login_ip' => $request->ip(),
+            'last_login_time' => $date,
+            'name'=>'yao_ban_001'
+        ];
         // 启动事务
         Db::startTrans();
         try {
-            $user = [
-                'phone' => $data['phone'],
-                'country_code' => $data['country_code'],
-                'password' => think_admin_md5($data['password'], UC_AUTH_KEY),
-                'last_login_ip' => $request->ip(),
-                'last_login_time' => date('Y-m-d H:i:s'),
-            ];
-            $user_model->save($user);
-            $user_id = $user_model->id;
-            $student = [
-                'user_id' => $user_id,
-            ];
-            //token 关联user
-            db('token')->where(['access_token'=>$token])->update(['user_id'=>$user_id]);
-            model('students')->save($student);
+            db('user')->insert($user);
             // 提交事务
             Db::commit();
-            $redis->del($data['phone']);
             return json_encode($this->mergeData());
         } catch (\Exception $e) {
             // 回滚事务
             Db::rollback();
             $this->wrong(603, $e->getMessage());
-        }
-
-
+        };
     }
 
-    //短信重置密码
-    public function updatePassword(Request $request)
-    {
-        $data = $request->except(['sign', 'timestamp', 'access_token']);
-        $user_info = db('user')->where(['phone'=>$data['phone']])->find();
-        if (empty($user_info)) {
-            $this->wrong(401, lang('Cell phone Numbers don not exist'));
-        }
-        //验证验证码
-        $redis = new Redis();
-        if (!$redis->exists($data['phone'])) {
-            $this->wrong(601, lang('illegal cell phone number'));
-        }
-        if ($redis->get($data['phone']) != $data['code']) {
-            $this->wrong(602, lang('verification code error'));
-        }
-        $password = think_admin_md5($data['password'], UC_AUTH_KEY);
-        $res = db('user')->where(['phone'=>$data['phone']])->update(['password'=>$password]);
-        if($res){
-            return json_encode($this->mergeData());
-        }else{
-            $this->wrong(603, lang('modify the failure'));
-
-        }
-    }
 
     //邮箱重置密码
     public function emailPassword(Request $request)
     {
-        $data = $request->except(['sign', 'timestamp', 'access_token']);
-        if(!isset($data['email']) || empty($data['email'])) $this->wrong(401, lang('email error'));
+        $date = date('Y-m-d H:i:s');
+        $data = $request->only(['email', 'old_password','password','code']);
+        if(!isset($data['email']) || empty($data['email'])) $this->wrong(401, '邮箱错误');
         $user_info = db('user')->where(['email'=>$data['email']])->find();
         if (empty($user_info)) {
-            $this->wrong(401, lang('this mailbox is not bound to an account'));
+            $this->wrong(401, '账号不存在');
         }
-        //验证验证码
-        $redis = new Redis();
-        if (!$redis->exists($data['email'])) {
-            $this->wrong(601, lang('illegal mail'));
-        }
-        if ($redis->get($data['email']) != $data['code']) {
-            $this->wrong(602, lang('verification code error'));
-        }
+        $is_code = db('email_code')->where(['email'=>$data['email'],'expiration_time'=>['gt'=>$date]])->value('code');
+        if(empty($is_code) || $data['code'] == $is_code) $this->wrong(601, '验证码错误');
         $password = think_admin_md5($data['password'], UC_AUTH_KEY);
         $res = db('user')->where(['email'=>$data['email']])->update(['password'=>$password]);
         if($res){
             return json_encode($this->mergeData());
         }else{
-            $this->wrong(603, lang('modify the failure'));
+            $this->wrong(603, '重置密码失败');
 
         }
     }

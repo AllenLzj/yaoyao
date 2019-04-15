@@ -57,7 +57,13 @@ Route::get('/admin/user_disabled', 'admin/user/disabled');//用户禁用
 /**
  * app部分路由
  */
-Route::get('/api/sendEmail', 'api/Reg/sendEmail');//用户禁用
+Route::get('/V1/sendEmail', 'api/Reg/sendEmail');//邮箱发送验证码
+Route::get('/V1/reg_save', 'api/Reg/save');//注册账号
+Route::get('/V1/email_password', 'api/Reg/emailPassword');//重置密码
+
+Route::post('/V1/avatar_edit', 'api/User/avatarEdit');//修改头像
+Route::get('/V1/user_save', 'api/User/save');//编辑资料
+
 
 
 

@@ -1,101 +1,66 @@
 <?php
-// +----------------------------------------------------------------------
-// | OneThink [ WE CAN DO IT JUST THINK IT ]
-// +----------------------------------------------------------------------
-// | Copyright (c) 2013 http://www.onethink.cn All rights reserved.
-// +----------------------------------------------------------------------
-// | Author: 麦当苗儿 <zuojiazi@vip.qq.com> <http://www.zjzit.cn>
-// +----------------------------------------------------------------------
-namespace app\admin\controller;
 
+namespace app\api\controller;
+
+use app\api\model\Users;
 use think\Controller;
 use think\Request;
 use think\Db;
-/**
- * 后台首页控制器
- * @author Allen.liu
- */
-class User extends Admin
+
+//指定其他域名访问
+header('Access-Control-Allow-Origin:*');
+
+class User extends ApiBase
 {
-    public function index()
-    {
-        $title = input('title');
-        $where = [];
-        if($title){
-            $where['name'] = array('like', "%{$title}%");
-        }
-        $page_num = request()->param('page_num', 10);
-        $data = db('user')
-            ->where($where)
-            ->paginate($page_num, false, [
-            'query' => Request::instance()->param(),//不丢失已存在的url参数
-        ]);
-        $list = $data->toArray();
-        $page = $data->render();
-        foreach ($list['data'] as &$vo){
-            $vo['sex_text'] = '';
-            if(!empty($vo['sex'])) $vo['sex_text'] = $vo['sex'] == 1?'男':'女';
-        }
-        $this->assign('title', '用户列表');
-        return $this->fetch('', compact('list', 'title','page'));
-    }
 
-    //禁用账号
-    public function disabled()
-    {
-        $user_id = input('id');
-        $status = db('user')->where('id',$user_id)->find();
-        if(empty($status)) return ['status'=>0,'info'=>'用户不存在！'];
-        $status = $status['status']==1?0:1;
-        $res = db('user')->where('id',$user_id)->update(['status'=>$status]);
-        if($res){
-            return ['status'=>1,'info'=>'操作成功！'];
-        }else{
-            return ['status'=>0,'info'=>'操作失败！'];
 
+   //编辑头像
+    public function avatarEdit()
+    {
+        $data = request()->only('id');
+        $avatar = request()->file('avatar');
+        $info = $avatar->move(PUBLIC_PATH . DS . 'uploads');
+        if ($info) {
+            $return['path'] = '/uploads/' . $info->getSaveName();
+            // 启动事务
+            Db::startTrans();
+            try {
+                //获取picture_id
+                $picture_id = Db::name('picture')->insertGetId(array('path' => $return['path']));
+                //更新教练头像
+                model('User')->save(['avatar' => $picture_id], ['user_id' => $data['id']]);
+                // 提交事务
+                Db::commit();
+                return json_encode($this->mergeData($return));
+            } catch (\Exception $e) {
+                // 回滚事务
+                Db::rollback();
+                $this->wrong('401', $e->getMessage());
+            }
+        } else {
+            // 上传失败获取错误信息
+            $this->wrong('401', $avatar->getError());
         }
     }
 
-    public function create()
-    {
-        $this->assign('title', '新增用户');
-        return $this->fetch('', compact('title'));
-    }
-    public function save(Request $request)
-    {
-        $data = $request->param();
-        $validate_result = $this->validate($data, 'User');
-        if (true !== $validate_result) {
-            return array('info' => $validate_result, 'status' => 0);
-        }
-        $data['password'] = think_admin_md5($data['password'], UC_AUTH_KEY);
-        $res = db('user')->insert($data);
-        if($res){
-            return ['info' => '新增成功！', 'status' => 1, 'target' => 'back'];
-        }else{
-            return ['info' => '新增失败', 'status' => 0];
+
+    //修改资料
+    public function save(Request $request){
+        $data = $request->only('name,sex,id');
+        // 启动事务
+        Db::startTrans();
+        try {
+            db('User')->where('id',$data['id'])->update($data);
+            // 提交事务
+            Db::commit();
+            return json_encode($this->mergeData());
+        } catch (\Exception $e) {
+            // 回滚事务
+            Db::rollback();
+            $this->wrong('401', $e->getMessage());
         }
     }
-    public function edit()
-    {
-        $id = input('id');
-        $info = db('user')->where('id',$id)->find();
-        $this->assign('title', '新增用户');
-        return $this->fetch('', compact('title','info'));
-    }
-    public function update(Request $request)
-    {
-        $data = $request->param();
-        $validate_result = $this->validate($data, 'User');
-        if (true !== $validate_result) {
-            return array('info' => $validate_result, 'status' => 0);
-        }
-        $data['password'] = think_admin_md5($data['password'], UC_AUTH_KEY);
-        $res = db('user')->update($data);
-        if($res){
-            return ['info' => '保存成功！', 'status' => 1, 'target' => 'back'];
-        }else{
-            return ['info' => '保存失败', 'status' => 0];
-        }
-    }
+
+
+
 }
