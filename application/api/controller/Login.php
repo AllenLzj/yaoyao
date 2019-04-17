@@ -6,10 +6,12 @@
 // +----------------------------------------------------------------------
 // | Author: 麦当苗儿 <zuojiazi@vip.qq.com> <http://www.zjzit.cn>
 // +----------------------------------------------------------------------
-namespace app\admin\controller;
+namespace app\api\controller;
 
 use think\Controller;
-
+use think\Request;
+use think\Response;
+use think\exception\HttpResponseException;
 
 /**
  * 后台首页控制器
@@ -19,59 +21,70 @@ use think\Controller;
 class Login extends Controller
 {
 
-    public function index()
+    public function login(Request $request)
     {
-        return $this->fetch('');
-    }
-
-    /**
-     * @param null $username
-     * @param null $password
-     * @return array
-     * User: Allen.liu
-     * 登录处理
-     */
-    public function login($phone = null, $password = null)
-    {
-        $Member = model('admin')->where(array('phone' => $phone))->find();
-        if (!empty($Member)) {
-            switch ($Member['status']) {
-                case 0: {
-                    $return_data = array('info' => '用户已被禁用！', 'status' => 0);
-                    return $return_data;
-                    break;
-                }
-                default: {
-                    if ($Member['password'] === think_admin_md5($password, UC_AUTH_KEY)) {
-                        model('admin')->login($Member['admin_id']);
-                        $return_data = array('info' => '登录成功！', 'status' => 1, 'url' => url('admin/Role/index'));
-                        return $return_data;
-
-                    } else {
-                        $return_data = array('info' => '密码错误！', 'status' => 0);
-                        return $return_data;
+        $date = date('Y-m-d H:i:s');
+        $data = $request->only('email,password');
+        $user = db('user')->where('email',$data['email'])->find();
+        if ($user) {
+                switch ($user['status']) {
+                    case 0: {
+                        $this->wrong(0, '用户被禁用');
+                        break;
                     }
-                    break;
-                }
+                    default: {
+                        if ($user['password'] === think_admin_md5($data['password'], UC_AUTH_KEY)) {
+                            //更换token绑定
+                            $login_data = [
+                                'last_login_ip' => $request->ip(),
+                                'last_login_time' => $date,
+                                'is_login' => 1,
+                                ];
+                            db('user')->where(['id'=>$user['id']])->update($login_data);
+                            $this->wrong(200, '登录成功', [], $data);
+                        } else {
+                            $this->wrong(0, '密码错误');
+                        }
+                        break;
+                    }
             }
-        } else { // 登录失败
-            $return_data = array('info' => '用户不存在！', 'status' => 0);
-            return $return_data;
+        } else {
+            $this->wrong(0, '用户不存在');
         }
 
     }
+
 
     /* 退出登录 */
-    public function logout()
+    public function logout(Request $request)
     {
-        if (session('?admin_info')) {
-            model('Admin')->logout();
-            $this->redirect('admin/Login/login');
-
-        } else {
-            $this->redirect('admin/Login/login');
+        $data = $request->only('user_id');
+        $res = db('user')->where('id',$data['user_id'])->update(['is_login'=>0]);
+        if($res){
+            $this->wrong(200, '退出登录成功');
+        }else{
+            $this->wrong(401, '退出登录失败');
         }
+
     }
 
+
+    /**
+     * @param int $code
+     * @param string $message
+     * @param array $header
+     */
+    protected function wrong($code = 500, $message = '', $header = [], $data=[])
+    {
+        $result = [
+            'code' => $code,
+            'message' => $message,
+        ];
+        if($data){
+            $result['data'] = $data;
+        }
+        $response = Response::create($result, 'json')->header($header);
+        throw new HttpResponseException($response);
+    }
 
 }

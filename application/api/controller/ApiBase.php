@@ -25,27 +25,11 @@ class ApiBase extends Controller
         parent::__construct($request);
         $user_id = $request->param('user_id');
         $is_login = db('user')->where(['id'=>$user_id,'is_login'=>1])->count();
-        if(empty($is_login)) return ['info'=>'请先登录！','status'=>0,'is_login'=>0];
+//        if(empty($is_login)) $this->wrong(666, '请重新登录');
 
     }
 
-    //发送验证码
-    public function verifyCode($phone)
-    {
-        if (check_phone($phone)) {
-            $content_num = rand_num(6);
-            $content = lang('your SMS verification code is:') . $content_num . lang('you are logged in to AirSnow and this verification code is valid for 10 minutes.');
-            if (smsend($phone, $content)) {
-                $redis = new Redis();
-                $redis->set($phone, $content_num, 'EX', 600);
-                $this->wrong(200, lang('the verification code was sent successfully'));
-            } else {
-                $this->wrong(601, lang('the verification code failed to be sent. Please retrieve it'));
-            }
-        } else {
-            $this->wrong(602, lang('wrong mobile phone number, please re-enter'));
-        }
-    }
+
 
     //组合数据
     public function mergeData($data = null)
@@ -57,25 +41,7 @@ class ApiBase extends Controller
         return $return_data;
     }
 
-    /**验证手机号和验证码是否是一致的
-     * @param $phone
-     * @param $code
-     * @param $type
-     * 不为空需要验证是否是用户的手机
-     * User: WangMingxue
-     * Email cumt_wangmingxue@126.com
-     */
-    public function checkCodePhone($phone, $code)
-    {
-        $redis = new Redis();
-        if (!$redis->exists($phone)) {
-            return lang('illegal cell phone number');
-        }
-        if ($redis->get($phone) != $code) {
-            return lang('verification code error');
-        }
-        return false;
-    }
+
     /**
      * @param int $code
      * @param string $message
