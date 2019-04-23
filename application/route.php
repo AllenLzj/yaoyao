@@ -57,12 +57,23 @@ Route::get('/admin/user_disabled', 'admin/user/disabled');//用户禁用
 /**
  * app部分路由
  */
+//用户部分
 Route::get('/V1/sendEmail', 'api/Reg/sendEmail');//邮箱发送验证码
 Route::get('/V1/reg_save', 'api/Reg/save');//注册账号
 Route::get('/V1/email_password', 'api/Reg/emailPassword');//重置密码
-
 Route::post('/V1/avatar_edit', 'api/User/avatarEdit');//修改头像
 Route::get('/V1/user_save', 'api/User/save');//编辑资料
+Route::get('/V1/login', 'api/Login/login');//登录
+Route::get('/V1/logout', 'api/Login/logout');//退出登录
+
+//邀请帖子
+Route::post('/V1/add_invitation', 'api/Invitation/addInvitation');//发布邀请
+Route::get('/V1/del_invitation', 'api/Invitation/delInvitation');//发布邀请
+Route::get('/V1/join_invitation', 'api/Invitation/joinInvitation');//加入邀请
+Route::get('/V1/exit_invitation', 'api/Invitation/exitInvitation');//退出邀请
+Route::get('/V1/get_academy', 'api/Invitation/getAcademy');//获取学院
+Route::get('/V1/invitation_list', 'api/Invitation/invitationList');//邀请列表
+Route::get('/V1/my_invitation', 'api/Invitation/myInvitation');//邀请列表
 
 
 
