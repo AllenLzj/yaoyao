@@ -1260,7 +1260,7 @@ function send_mail($tomail, $name, $subject = '', $body = '', $attachment = null
     $mail->Host = "smtp.qq.com"; // SMTP 服务器
     $mail->Port = 465;                  // SMTP服务器的端口号
     $mail->Username = "693021325@qq.com";    // SMTP服务器用户名
-    $mail->Password = "jehxxvjquylxbehi";     // SMTP服务器密码
+    $mail->Password = "fpxidzjqgxaybcbc";     // SMTP服务器密码
     $mail->SetFrom('693021325@qq.com', 'Allen.liu');
     $replyEmail = '';                   //留空则为发件人EMAIL
     $replyName = '';                    //回复名称（留空则为发件人名称）

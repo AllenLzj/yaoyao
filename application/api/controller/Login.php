@@ -18,6 +18,8 @@ use think\exception\HttpResponseException;
  *
  * @author Allen.liu
  */
+//指定其他域名访问
+header('Access-Control-Allow-Origin:*');
 class Login extends Controller
 {
 
@@ -41,7 +43,10 @@ class Login extends Controller
                                 'is_login' => 1,
                                 ];
                             db('user')->where(['id'=>$user['id']])->update($login_data);
-                            $this->wrong(200, '登录成功', [], $data);
+                            unset($data['password']);
+                            $data['user_id'] = $user['id'];
+
+                                $this->wrong(200, '登录成功', [], $data);
                         } else {
                             $this->wrong(0, '密码错误');
                         }
@@ -56,10 +61,9 @@ class Login extends Controller
 
 
     /* 退出登录 */
-    public function logout(Request $request)
+    public function logout($user_id)
     {
-        $data = $request->only('user_id');
-        $res = db('user')->where('id',$data['user_id'])->update(['is_login'=>0]);
+        $res = db('user')->where('id',$user_id)->update(['is_login'=>0]);
         if($res){
             $this->wrong(200, '退出登录成功');
         }else{
