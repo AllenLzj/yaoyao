@@ -3,10 +3,8 @@
 namespace app\api\controller;
 
 use think\Controller;
-use Hashids\Hashids;
 use think\Request;
 use think\Db;
-use Predis\Client as Redis;
 use think\Response;
 use think\exception\HttpResponseException;
 
@@ -15,7 +13,6 @@ header('Access-Control-Allow-Origin:*');
 
 class ApiBase extends Controller
 {
-
     protected static $access_token, $timestamp, $sign, $sign_data;
     protected static $return_data = '';
 
