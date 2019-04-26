@@ -54,6 +54,11 @@ Route::get('/admin/user_edit/:id', 'admin/user/edit');//编辑用户
 Route::post('/admin/user_update', 'admin/user/update');//更新用户
 Route::get('/admin/user_disabled', 'admin/user/disabled');//用户禁用
 
+//文章管理
+Route::get('/admin/article_index', 'admin/article/index');//文章列表
+Route::delete('/admin/article_delete', 'admin/article/delete');//文章列表
+
+
 /**
  * app部分路由
  */
@@ -74,6 +79,11 @@ Route::get('/V1/exit_invitation', 'api/Invitation/exitInvitation');//退出邀�
 Route::get('/V1/get_academy', 'api/Invitation/getAcademy');//获取学院
 Route::get('/V1/invitation_list', 'api/Invitation/invitationList');//邀请列表
 Route::get('/V1/my_invitation', 'api/Invitation/myInvitation');//邀请列表
+
+//文章
+Route::get('/V1/article_index', 'api/article/index');//文章列表
+Route::get('/V1/article_like/:article_id', 'api/article/like');//点赞
+
 
 
 
