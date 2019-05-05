@@ -13,11 +13,19 @@ header('Access-Control-Allow-Origin:*');
 class User extends ApiBase
 {
 
+    //获取个人资料
+    public function getPersonalData($user_id)
+    {
+        $data = db('user')->where('id',$user_id)->find();
+        $data['icon_path'] = db('picture')->where('picture_id',$data['icon'])->value('path');
+//        $data['academy'] = db('academy')->where('id',$data['academy_id'])->value('name');
+        return json_encode($this->mergeData($data));
+    }
 
    //编辑头像
-    public function avatarEdit()
+    public function avatarEdit(Request $request)
     {
-        $data = request()->only('id');
+        $data = $request->only('user_id');
         $avatar = request()->file('avatar');
         $info = $avatar->move(PUBLIC_PATH . DS . 'uploads');
         if ($info) {
@@ -26,9 +34,9 @@ class User extends ApiBase
             Db::startTrans();
             try {
                 //获取picture_id
-                $picture_id = Db::name('picture')->insertGetId(array('path' => $return['path']));
+                $picture_id = db('picture')->insertGetId(['path' => $return['path']]);
                 //更新教练头像
-                model('User')->save(['avatar' => $picture_id], ['user_id' => $data['id']]);
+                db('user')->where('id',$data['user_id'])->update(['icon' => $picture_id]);
                 // 提交事务
                 Db::commit();
                 return json_encode($this->mergeData($return));
