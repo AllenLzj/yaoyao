@@ -37,10 +37,16 @@ class Invitation extends Admin
         $list = $data->toArray();
         $page = $data->render();
         foreach ($list['data'] as &$vo){
-//            $vo['content_num'] = db('article_comment')->where('article_id',$vo['id'])->count();
+            $content = db('user_invitation')->alias('ui')
+                ->join('user u','u.id=ui.user_id')
+                ->join('picture p','p.picture_id=u.icon')
+                ->where('invitation_id',$vo['id'])
+                ->field('u.id,u.name,p.path')
+                ->select();
+            $vo['content_num'] = $content;
 
         }
-        print_r($list);die;
+//        print_r($list);die;
         $this->assign('title', '文章列表');
         return $this->fetch('', compact('list', 'title','page'));
     }
