@@ -51,11 +51,12 @@ class Invitation extends Admin
         return $this->fetch('', compact('list', 'title','page'));
     }
 
-    //禁用账号
+    //删除
     public function delete()
     {
-        $ids = input('ids');
-        $res = db('user')->where('article','in',$ids)->delete();
+        $prm = input('');
+        $ids = $prm['id'];
+        $res = db('invitation')->where('id','in',$ids)->delete();
         if($res){
             return ['status'=>1,'info'=>'删除成功！'];
         }else{
