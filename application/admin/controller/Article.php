@@ -39,7 +39,6 @@ class Article extends Admin
         foreach ($list['data'] as &$vo){
             $vo['content_num'] = db('article_comment')->where('article_id',$vo['id'])->count();
         }
-//        print_r($list);die;
         $this->assign('title', '文章列表');
         return $this->fetch('', compact('list', 'title','page'));
     }
