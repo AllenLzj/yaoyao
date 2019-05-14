@@ -1,2 +1,7 @@
 1.MySQL 5.7的坏毛病  执行下面这句
 SET@@GLOBAL.sql_mode="STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION";  
+
+//后台语言 PHP 后台框架 thinkPHP5
+//前端框架 vue.js
+//数据库 mysql
+//开发环境  php5.6 mysql5.7  apache2.4

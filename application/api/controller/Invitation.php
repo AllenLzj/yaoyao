@@ -105,9 +105,13 @@ class Invitation extends ApiBase
     public function invitationList(Request $request)
     {
         $type = input('type',1);
+        $search = input('search',null);
+        $where = ['i.type'=>$type];
+        if(!empty($search)) $where['i.title|i.info'] = ['like', "%{$search}%"];
         $data = db('invitation')->alias('i')
             ->join('academy a','a.id=i.academy_id')
-            ->where('i.type',$type)
+            ->where($where)
+            ->order('i.id desc')
             ->field('i.*,a.name academy_name')
             ->select();
         foreach ($data as &$vo){

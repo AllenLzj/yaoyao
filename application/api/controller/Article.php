@@ -15,7 +15,7 @@ class Article extends ApiBase
     //文章列表
     public function index($user_id)
     {
-        $data = db('article')->select();
+        $data = db('article')->order('id desc')->select();
         $article_ids = array_column($data,'id');
         $likes = db('article_like')->where(['user_id'=>$user_id])->column('article_id,id');
         $user_icon = db('user')->alias('u')
@@ -57,16 +57,16 @@ class Article extends ApiBase
     public function like($user_id, $article_id)
     {
 
-        $like = db('article_like')->where(['article_id'=>$article_id,'user_id'=>$article_id])->find();
+        $like = db('article_like')->where(['article_id'=>$article_id,'user_id'=>$user_id])->find();
         // 启动事务
         Db::startTrans();
         try {
-            if(!empty($like)){
+            if(empty($like)){
                 db('article_like')->insert(['article_id'=>$article_id,'user_id'=>$user_id,'create_time'=>date('Y-m-d H:i:s')]);
                 db('article')->where('id',$article_id)->setInc('like_num',1);
             }else{
                 db('article_like')->where(['article_id'=>$article_id,'user_id'=>$user_id])->delete();
-                db('article')->where(['id'=>$article_id])->setDec('like_num',1);
+                db('article')->where('id',$article_id)->setDec('like_num',1);
             }
             // 提交事务
             Db::commit();

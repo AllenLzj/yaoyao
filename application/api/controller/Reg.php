@@ -44,6 +44,8 @@ class Reg extends ApiBase
         $date = date('Y-m-d H:i:s');
         $data = $request->only(['email', 'code']);
         $is_code = db('email_code')->where(['email'=>$data['email'],'expiration_time'=>['egt',$date]])->find();
+        $user = db('user')->where('email',$data['email'])->find();
+        if(!empty($user)) $this->wrong(601, '注册失败，账号已存在');
         if(empty($is_code) || $data['code'] == $is_code) $this->wrong(601, '验证码错误');
         $user = [
             'email' => $data['email'],
@@ -71,7 +73,7 @@ class Reg extends ApiBase
     public function emailPassword(Request $request)
     {
         $date = date('Y-m-d H:i:s');
-        $data = $request->only(['email', 'old_password','password','code']);
+        $data = $request->only(['email','password','code']);
         if(!isset($data['email']) || empty($data['email'])) $this->wrong(401, '邮箱错误');
         $user_info = db('user')->where(['email'=>$data['email']])->find();
         if (empty($user_info)) {
