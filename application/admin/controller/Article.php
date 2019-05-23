@@ -39,16 +39,16 @@ class Article extends Admin
         foreach ($list['data'] as &$vo){
             $vo['content_num'] = db('article_comment')->where('article_id',$vo['id'])->count();
         }
-//        print_r($list);die;
         $this->assign('title', '文章列表');
         return $this->fetch('', compact('list', 'title','page'));
     }
 
-    //禁用账号
+    //删除
     public function delete()
     {
-        $ids = input('ids');
-        $res = db('user')->where('article','in',$ids)->delete();
+        $prm = input('');
+        $ids = $prm['id'];
+        $res = db('article')->where('id','in',$ids)->delete();
         if($res){
             return ['status'=>1,'info'=>'删除成功！'];
         }else{
