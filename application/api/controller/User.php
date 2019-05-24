@@ -69,6 +69,21 @@ class User extends ApiBase
         }
     }
 
+    //认证
+    public function authentication($user_id){
+        // 启动事务
+        Db::startTrans();
+        try {
+            db('User')->where('id',$user_id)->update(['is_authentication'=>1]);
+            // 提交事务
+            Db::commit();
+            return json_encode($this->mergeData());
+        } catch (\Exception $e) {
+            // 回滚事务
+            Db::rollback();
+            $this->wrong('401', $e->getMessage());
+        }
+    }
 
 
 }

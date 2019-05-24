@@ -15,7 +15,9 @@ class Article extends ApiBase
     //文章列表
     public function index($user_id)
     {
-        $data = db('article')->order('id desc')->select();
+        $type = input('type',1);
+        $where = ['type'=>$type];
+        $data = db('article')->where($where)->order('id desc')->select();
         $article_ids = array_column($data,'id');
         $likes = db('article_like')->where(['user_id'=>$user_id])->column('article_id,id');
         $user_icon = db('user')->alias('u')
@@ -50,7 +52,9 @@ class Article extends ApiBase
 
             $vo['comment'] = $comment;
         }
-        return json_encode($this->mergeData($data));
+        $list['article'] = $data;
+        $list['announcement'] = db('announcement')->order('id desc')->select();
+        return json_encode($this->mergeData($list));
     }
 
     //点赞
@@ -125,7 +129,7 @@ class Article extends ApiBase
     //发布文章
     public function addArticle(Request $request)
     {
-        $prm = $request->only('user_id,title,info,picture_ids');
+        $prm = $request->only('user_id,title,info,picture_ids,type');
         $prm['create_time'] = date('Y-m-d H:i:s');
         try {
             db('article')->insert($prm);

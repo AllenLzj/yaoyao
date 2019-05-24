@@ -58,6 +58,12 @@ Route::get('/admin/user_disabled', 'admin/user/disabled');//用户禁用
 Route::get('/admin/article_index', 'admin/article/index');//文章列表
 Route::delete('/admin/article_delete', 'admin/article/delete');//文章列表
 
+//公告
+Route::get('/admin/Announcement/index', 'admin/Announcement/index');
+Route::get('/admin/Announcement/create', 'admin/Announcement/create');
+Route::post('/admin/Announcement/save', 'admin/Announcement/save');
+Route::get('/admin/Announcement/edit', 'admin/Announcement/edit');
+Route::post('/admin/Announcement/update', 'admin/Announcement/update');
 
 /**
  * app部分路由
@@ -69,6 +75,7 @@ Route::get('/V1/email_password', 'api/Reg/emailPassword');//重置密码
 Route::get('/V1/getPersonalData', 'api/User/getPersonalData');//获取个人资料
 Route::post('/V1/avatar_edit', 'api/User/avatarEdit');//修改头像
 Route::get('/V1/user_save', 'api/User/save');//编辑资料
+Route::get('/V1/authentication', 'api/User/authentication');//认证
 Route::get('/V1/login', 'api/Login/login');//登录
 Route::get('/V1/logout', 'api/Login/logout');//退出登录
 
@@ -89,8 +96,6 @@ Route::get('/V1/article_like/:article_id', 'api/article/like');//点赞
 Route::get('/V1/article_comment/:article_id', 'api/article/comment');//评论
 Route::get('/V1/del_article/:article_id', 'api/article/delArticle');//删除
 Route::get('/V1/upload_pictures', 'api/article/uploadPictures');//上传图片
-
-
 
 
 
