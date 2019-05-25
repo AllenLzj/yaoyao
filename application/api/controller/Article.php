@@ -12,7 +12,7 @@ header('Access-Control-Allow-Origin:*');
 class Article extends ApiBase
 {
 
-    //文章列表
+    //论坛列表
     public function index($user_id)
     {
         $type = input('type',1);
@@ -126,7 +126,7 @@ class Article extends ApiBase
         };
     }
 
-    //发布文章
+    //发布论坛
     public function addArticle(Request $request)
     {
         $prm = $request->only('user_id,title,info,picture_ids,type');

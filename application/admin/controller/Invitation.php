@@ -47,7 +47,7 @@ class Invitation extends Admin
 
         }
 //        print_r($list);die;
-        $this->assign('title', '文章列表');
+        $this->assign('title', '论坛列表');
         return $this->fetch('', compact('list', 'title','page'));
     }
 

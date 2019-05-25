@@ -4,10 +4,10 @@
 <block name="main-top">
     <form class="search-form" onkeydown="if(event.keyCode==13){return false;}">
         <button class="small ui button ajax-delete-many negative" data-url="{:url('admin/Article/delete')}"
-                data-title="确认删除文章" onclick="return false;">删 除
+                data-title="确认删除论坛" onclick="return false;">删 除
         </button>
         <div class="ui action small input" id="search-input">
-            <input type="text" name="title" placeholder="文章标题/作者" value="{:input('title')}" class="search-input">
+            <input type="text" name="title" placeholder="论坛标题/作者" value="{:input('title')}" class="search-input">
             <button class="ui button small blue" id="search" onclick="return false"
                     url="{:url('admin/Article/index')}">搜索
             </button>
@@ -45,7 +45,7 @@
                     <td>{$vo.create_time}</td>
                     <td>
                         <a href="#" class="ajax-delete-one" data-url="{:url('admin/Article/delete')}"
-                           data-id="{$vo.id}" data-title="删除文章" onclick="return false;">删除</a>
+                           data-id="{$vo.id}" data-title="删除论坛" onclick="return false;">删除</a>
                     </td>
                 </tr>
             </volist>

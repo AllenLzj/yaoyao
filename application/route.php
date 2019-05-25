@@ -54,9 +54,9 @@ Route::get('/admin/user_edit/:id', 'admin/user/edit');//编辑用户
 Route::post('/admin/user_update', 'admin/user/update');//更新用户
 Route::get('/admin/user_disabled', 'admin/user/disabled');//用户禁用
 
-//文章管理
-Route::get('/admin/article_index', 'admin/article/index');//文章列表
-Route::delete('/admin/article_delete', 'admin/article/delete');//文章列表
+//论坛管理
+Route::get('/admin/article_index', 'admin/article/index');//论坛列表
+Route::delete('/admin/article_delete', 'admin/article/delete');//论坛列表
 
 //公告
 Route::get('/admin/Announcement/index', 'admin/Announcement/index');
@@ -96,9 +96,9 @@ Route::get('/V1/invitation_list', 'api/Invitation/invitationList');//邀请列�
 Route::get('/V1/my_invitation', 'api/Invitation/myInvitation');//我参与的邀请
 Route::get('/V1/my_push_invitation', 'api/Invitation/myPushInvitation');//我发布的邀请
 
-//文章
-Route::get('/V1/article_add', 'api/article/addArticle');//文章列表
-Route::get('/V1/article_index', 'api/article/index');//文章列表
+//论坛
+Route::get('/V1/article_add', 'api/article/addArticle');//论坛列表
+Route::get('/V1/article_index', 'api/article/index');//论坛列表
 Route::get('/V1/article_like/:article_id', 'api/article/like');//点赞
 Route::get('/V1/article_comment/:article_id', 'api/article/comment');//评论
 Route::get('/V1/del_article/:article_id', 'api/article/delArticle');//删除
