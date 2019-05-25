@@ -1,30 +1,475 @@
 <extend name="common/layout"/>
 <block name="style">
     <style>
+
     </style>
 </block>
 <block name="main-body">
     <form method="post" class="ui form mini">
         <div class="inline field">
             <label>场地名称</label>
-            <input type="text" name="name">
+            <input type="text" name="name" class="place_name">
         </div>
         <div class="inline field">
             <label>场地类型</label>
-            <select class="ui dropdown" name="type">
-                <option value="1" >自习室</option>
-                <option value="2" >运动场馆</option>
-                <option value="3" >会议室</option>
+            <select class="ui dropdown" name="place_type">
+                <option value="1">自习室</option>
+                <option value="2">运动场馆</option>
+                <option value="3">会议室</option>
             </select>
         </div>
         <div class="inline field">
             <label>说明</label>
-            <textarea name="info"></textarea>
+            <textarea name="info"  class="place_info" ></textarea>
         </div>
         <div class="inline field">
+            <label>可预约时间(每周)</label>
+        </div>
+        <div>
+            <div class="inline field">
+                <label>周一</label>
+                <div class="ui checkbox check_all">
+                    <input type="checkbox" tabindex="0">
+                    <label style="width: 70px !important;">全选</label>
+                </div>
+            </div>
+            <div class="inline field week_time" week-id="1">
+                <label></label>
+                <div class="ui checkbox">
+                    <input type="checkbox" tabindex="0" class="time_label" value="1">
+                    <label style="width: 70px !important;">第一节</label>
+                </div>
+                <div class="ui checkbox">
+                    <input type="checkbox" tabindex="0" class="time_label" value="2">
+                    <label style="width: 70px !important;">第二节</label>
+                </div>
+                <div class="ui checkbox">
+                    <input type="checkbox" tabindex="0" class="time_label" value="3">
+                    <label style="width: 70px !important;">第三节</label>
+                </div>
+                <div class="ui checkbox">
+                    <input type="checkbox" tabindex="0" class="time_label" value="4">
+                    <label style="width: 70px !important;">第四节</label>
+                </div>
+                <div class="ui checkbox">
+                    <input type="checkbox" tabindex="0" class="time_label" value="5">
+                    <label style="width: 70px !important;">第五节</label>
+                </div>
+                <div class="ui checkbox">
+                    <input type="checkbox" tabindex="0" class="time_label" value="6">
+                    <label style="width: 70px !important;">第六节</label>
+                </div>
+                <div class="inline field">
+                    <label></label>
+                    <div class="ui checkbox">
+                        <input type="checkbox" tabindex="0" class="time_label" value="7">
+                        <label style="width: 70px !important;">第七节</label>
+                    </div>
+                    <div class="ui checkbox">
+                        <input type="checkbox" tabindex="0" class="time_label" value="8">
+                        <label style="width: 70px !important;">第八节</label>
+                    </div>
+                    <div class="ui checkbox">
+                        <input type="checkbox" tabindex="0" class="time_label" value="9">
+                        <label style="width: 70px !important;">第九节</label>
+                    </div>
+                    <div class="ui checkbox">
+                        <input type="checkbox" tabindex="0" class="time_label" value="10">
+                        <label style="width: 70px !important;">第十节</label>
+                    </div>
+                    <div class="ui checkbox">
+                        <input type="checkbox" tabindex="0" class="time_label" value="11">
+                        <label style="width: 83px !important;">第十一节</label>
+                    </div>
+                    <div class="ui checkbox">
+                        <input type="checkbox" tabindex="0" class="time_label" value="12">
+                        <label style="width: 83px !important;">第十二节</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div style="margin-top: 10px;">
+            <div class="inline field">
+                <label>周二</label>
+                <div class="ui checkbox check_all">
+                    <input type="checkbox" tabindex="0">
+                    <label style="width: 70px !important;">全选</label>
+                </div>
+            </div>
+            <div class="inline field week_time" week-id="2">
+                <label></label>
+                <div class="ui checkbox">
+                    <input type="checkbox" tabindex="0" class="time_label" value="1">
+                    <label style="width: 70px !important;">第一节</label>
+                </div>
+                <div class="ui checkbox">
+                    <input type="checkbox" tabindex="0" class="time_label" value="2">
+                    <label style="width: 70px !important;">第二节</label>
+                </div>
+                <div class="ui checkbox">
+                    <input type="checkbox" tabindex="0" class="time_label" value="3">
+                    <label style="width: 70px !important;">第三节</label>
+                </div>
+                <div class="ui checkbox">
+                    <input type="checkbox" tabindex="0" class="time_label" value="4">
+                    <label style="width: 70px !important;">第四节</label>
+                </div>
+                <div class="ui checkbox">
+                    <input type="checkbox" tabindex="0" class="time_label" value="5">
+                    <label style="width: 70px !important;">第五节</label>
+                </div>
+                <div class="ui checkbox">
+                    <input type="checkbox" tabindex="0" class="time_label" value="6">
+                    <label style="width: 70px !important;">第六节</label>
+                </div>
+                <div class="inline field">
+                    <label></label>
+                    <div class="ui checkbox">
+                        <input type="checkbox" tabindex="0" class="time_label" value="7">
+                        <label style="width: 70px !important;">第七节</label>
+                    </div>
+                    <div class="ui checkbox">
+                        <input type="checkbox" tabindex="0" class="time_label" value="8">
+                        <label style="width: 70px !important;">第八节</label>
+                    </div>
+                    <div class="ui checkbox">
+                        <input type="checkbox" tabindex="0" class="time_label" value="9">
+                        <label style="width: 70px !important;">第九节</label>
+                    </div>
+                    <div class="ui checkbox">
+                        <input type="checkbox" tabindex="0" class="time_label" value="10">
+                        <label style="width: 70px !important;">第十节</label>
+                    </div>
+                    <div class="ui checkbox">
+                        <input type="checkbox" tabindex="0" class="time_label" value="11">
+                        <label style="width: 83px !important;">第十一节</label>
+                    </div>
+                    <div class="ui checkbox">
+                        <input type="checkbox" tabindex="0" class="time_label" value="12">
+                        <label style="width: 83px !important;">第十二节</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div style="margin-top: 10px;">
+            <div class="inline field">
+                <label>周三</label>
+                <div class="ui checkbox check_all">
+                    <input type="checkbox" tabindex="0">
+                    <label style="width: 70px !important;">全选</label>
+                </div>
+            </div>
+            <div class="inline field week_time" week-id="3">
+                <label></label>
+                <div class="ui checkbox">
+                    <input type="checkbox" tabindex="0" class="time_label" value="1">
+                    <label style="width: 70px !important;">第一节</label>
+                </div>
+                <div class="ui checkbox">
+                    <input type="checkbox" tabindex="0" class="time_label" value="2">
+                    <label style="width: 70px !important;">第二节</label>
+                </div>
+                <div class="ui checkbox">
+                    <input type="checkbox" tabindex="0" class="time_label" value="3">
+                    <label style="width: 70px !important;">第三节</label>
+                </div>
+                <div class="ui checkbox">
+                    <input type="checkbox" tabindex="0" class="time_label" value="4">
+                    <label style="width: 70px !important;">第四节</label>
+                </div>
+                <div class="ui checkbox">
+                    <input type="checkbox" tabindex="0" class="time_label" value="5">
+                    <label style="width: 70px !important;">第五节</label>
+                </div>
+                <div class="ui checkbox">
+                    <input type="checkbox" tabindex="0" class="time_label" value="6">
+                    <label style="width: 70px !important;">第六节</label>
+                </div>
+                <div class="inline field">
+                    <label></label>
+                    <div class="ui checkbox">
+                        <input type="checkbox" tabindex="0" class="time_label" value="7">
+                        <label style="width: 70px !important;">第七节</label>
+                    </div>
+                    <div class="ui checkbox">
+                        <input type="checkbox" tabindex="0" class="time_label" value="8">
+                        <label style="width: 70px !important;">第八节</label>
+                    </div>
+                    <div class="ui checkbox">
+                        <input type="checkbox" tabindex="0" class="time_label" value="9">
+                        <label style="width: 70px !important;">第九节</label>
+                    </div>
+                    <div class="ui checkbox">
+                        <input type="checkbox" tabindex="0" class="time_label" value="10">
+                        <label style="width: 70px !important;">第十节</label>
+                    </div>
+                    <div class="ui checkbox">
+                        <input type="checkbox" tabindex="0" class="time_label" value="11">
+                        <label style="width: 83px !important;">第十一节</label>
+                    </div>
+                    <div class="ui checkbox">
+                        <input type="checkbox" tabindex="0" class="time_label" value="12">
+                        <label style="width: 83px !important;">第十二节</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div style="margin-top: 10px;">
+            <div class="inline field">
+                <label>周四</label>
+                <div class="ui checkbox check_all">
+                    <input type="checkbox" tabindex="0">
+                    <label style="width: 70px !important;">全选</label>
+                </div>
+            </div>
+            <div class="inline field week_time" week-id="4">
+                <label></label>
+                <div class="ui checkbox">
+                    <input type="checkbox" tabindex="0" class="time_label" value="1">
+                    <label style="width: 70px !important;">第一节</label>
+                </div>
+                <div class="ui checkbox">
+                    <input type="checkbox" tabindex="0" class="time_label" value="2">
+                    <label style="width: 70px !important;">第二节</label>
+                </div>
+                <div class="ui checkbox">
+                    <input type="checkbox" tabindex="0" class="time_label" value="3">
+                    <label style="width: 70px !important;">第三节</label>
+                </div>
+                <div class="ui checkbox">
+                    <input type="checkbox" tabindex="0" class="time_label" value="4">
+                    <label style="width: 70px !important;">第四节</label>
+                </div>
+                <div class="ui checkbox">
+                    <input type="checkbox" tabindex="0" class="time_label" value="5">
+                    <label style="width: 70px !important;">第五节</label>
+                </div>
+                <div class="ui checkbox">
+                    <input type="checkbox" tabindex="0" class="time_label" value="6">
+                    <label style="width: 70px !important;">第六节</label>
+                </div>
+                <div class="inline field">
+                    <label></label>
+                    <div class="ui checkbox">
+                        <input type="checkbox" tabindex="0" class="time_label" value="7">
+                        <label style="width: 70px !important;">第七节</label>
+                    </div>
+                    <div class="ui checkbox">
+                        <input type="checkbox" tabindex="0" class="time_label" value="8">
+                        <label style="width: 70px !important;">第八节</label>
+                    </div>
+                    <div class="ui checkbox">
+                        <input type="checkbox" tabindex="0" class="time_label" value="9">
+                        <label style="width: 70px !important;">第九节</label>
+                    </div>
+                    <div class="ui checkbox">
+                        <input type="checkbox" tabindex="0" class="time_label" value="10">
+                        <label style="width: 70px !important;">第十节</label>
+                    </div>
+                    <div class="ui checkbox">
+                        <input type="checkbox" tabindex="0" class="time_label" value="11">
+                        <label style="width: 83px !important;">第十一节</label>
+                    </div>
+                    <div class="ui checkbox">
+                        <input type="checkbox" tabindex="0" class="time_label" value="12">
+                        <label style="width: 83px !important;">第十二节</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div style="margin-top: 10px;">
+            <div class="inline field">
+                <label>周五</label>
+                <div class="ui checkbox check_all">
+                    <input type="checkbox" tabindex="0">
+                    <label style="width: 70px !important;">全选</label>
+                </div>
+            </div>
+            <div class="inline field week_time" week-id="5">
+                <label></label>
+                <div class="ui checkbox">
+                    <input type="checkbox" tabindex="0" class="time_label" value="1">
+                    <label style="width: 70px !important;">第一节</label>
+                </div>
+                <div class="ui checkbox">
+                    <input type="checkbox" tabindex="0" class="time_label" value="2">
+                    <label style="width: 70px !important;">第二节</label>
+                </div>
+                <div class="ui checkbox">
+                    <input type="checkbox" tabindex="0" class="time_label" value="3">
+                    <label style="width: 70px !important;">第三节</label>
+                </div>
+                <div class="ui checkbox">
+                    <input type="checkbox" tabindex="0" class="time_label" value="4">
+                    <label style="width: 70px !important;">第四节</label>
+                </div>
+                <div class="ui checkbox">
+                    <input type="checkbox" tabindex="0" class="time_label" value="5">
+                    <label style="width: 70px !important;">第五节</label>
+                </div>
+                <div class="ui checkbox">
+                    <input type="checkbox" tabindex="0" class="time_label" value="6">
+                    <label style="width: 70px !important;">第六节</label>
+                </div>
+                <div class="inline field">
+                    <label></label>
+                    <div class="ui checkbox">
+                        <input type="checkbox" tabindex="0" class="time_label" value="7">
+                        <label style="width: 70px !important;">第七节</label>
+                    </div>
+                    <div class="ui checkbox">
+                        <input type="checkbox" tabindex="0" class="time_label" value="8">
+                        <label style="width: 70px !important;">第八节</label>
+                    </div>
+                    <div class="ui checkbox">
+                        <input type="checkbox" tabindex="0" class="time_label" value="9">
+                        <label style="width: 70px !important;">第九节</label>
+                    </div>
+                    <div class="ui checkbox">
+                        <input type="checkbox" tabindex="0" class="time_label" value="10">
+                        <label style="width: 70px !important;">第十节</label>
+                    </div>
+                    <div class="ui checkbox">
+                        <input type="checkbox" tabindex="0" class="time_label" value="11">
+                        <label style="width: 83px !important;">第十一节</label>
+                    </div>
+                    <div class="ui checkbox">
+                        <input type="checkbox" tabindex="0" class="time_label" value="12">
+                        <label style="width: 83px !important;">第十二节</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div style="margin-top: 10px;">
+            <div class="inline field">
+                <label>周六</label>
+                <div class="ui checkbox check_all">
+                    <input type="checkbox" tabindex="0">
+                    <label style="width: 70px !important;">全选</label>
+                </div>
+            </div>
+            <div class="inline field week_time" week-id="6">
+                <label></label>
+                <div class="ui checkbox">
+                    <input type="checkbox" tabindex="0" class="time_label" value="1">
+                    <label style="width: 70px !important;">第一节</label>
+                </div>
+                <div class="ui checkbox">
+                    <input type="checkbox" tabindex="0" class="time_label" value="2">
+                    <label style="width: 70px !important;">第二节</label>
+                </div>
+                <div class="ui checkbox">
+                    <input type="checkbox" tabindex="0" class="time_label" value="3">
+                    <label style="width: 70px !important;">第三节</label>
+                </div>
+                <div class="ui checkbox">
+                    <input type="checkbox" tabindex="0" class="time_label" value="4">
+                    <label style="width: 70px !important;">第四节</label>
+                </div>
+                <div class="ui checkbox">
+                    <input type="checkbox" tabindex="0" class="time_label" value="5">
+                    <label style="width: 70px !important;">第五节</label>
+                </div>
+                <div class="ui checkbox">
+                    <input type="checkbox" tabindex="0" class="time_label" value="6">
+                    <label style="width: 70px !important;">第六节</label>
+                </div>
+                <div class="inline field">
+                    <label></label>
+                    <div class="ui checkbox">
+                        <input type="checkbox" tabindex="0" class="time_label" value="7">
+                        <label style="width: 70px !important;">第七节</label>
+                    </div>
+                    <div class="ui checkbox">
+                        <input type="checkbox" tabindex="0" class="time_label" value="8">
+                        <label style="width: 70px !important;">第八节</label>
+                    </div>
+                    <div class="ui checkbox">
+                        <input type="checkbox" tabindex="0" class="time_label" value="9">
+                        <label style="width: 70px !important;">第九节</label>
+                    </div>
+                    <div class="ui checkbox">
+                        <input type="checkbox" tabindex="0" class="time_label" value="10">
+                        <label style="width: 70px !important;">第十节</label>
+                    </div>
+                    <div class="ui checkbox">
+                        <input type="checkbox" tabindex="0" class="time_label" value="11">
+                        <label style="width: 83px !important;">第十一节</label>
+                    </div>
+                    <div class="ui checkbox">
+                        <input type="checkbox" tabindex="0" class="time_label" value="12">
+                        <label style="width: 83px !important;">第十二节</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div style="margin-top: 10px;">
+            <div class="inline field">
+                <label>周日</label>
+                <div class="ui checkbox check_all">
+                    <input type="checkbox" tabindex="0">
+                    <label style="width: 70px !important;">全选</label>
+                </div>
+            </div>
+            <div class="inline field week_time" week-id="0">
+                <label></label>
+                <div class="ui checkbox">
+                    <input type="checkbox" tabindex="0" class="time_label" value="1">
+                    <label style="width: 70px !important;">第一节</label>
+                </div>
+                <div class="ui checkbox">
+                    <input type="checkbox" tabindex="0" class="time_label" value="2">
+                    <label style="width: 70px !important;">第二节</label>
+                </div>
+                <div class="ui checkbox">
+                    <input type="checkbox" tabindex="0" class="time_label" value="3">
+                    <label style="width: 70px !important;">第三节</label>
+                </div>
+                <div class="ui checkbox">
+                    <input type="checkbox" tabindex="0" class="time_label" value="4">
+                    <label style="width: 70px !important;">第四节</label>
+                </div>
+                <div class="ui checkbox">
+                    <input type="checkbox" tabindex="0" class="time_label" value="5">
+                    <label style="width: 70px !important;">第五节</label>
+                </div>
+                <div class="ui checkbox">
+                    <input type="checkbox" tabindex="0" class="time_label" value="6">
+                    <label style="width: 70px !important;">第六节</label>
+                </div>
+                <div class="inline field">
+                    <label></label>
+                    <div class="ui checkbox">
+                        <input type="checkbox" tabindex="0" class="time_label" value="7">
+                        <label style="width: 70px !important;">第七节</label>
+                    </div>
+                    <div class="ui checkbox">
+                        <input type="checkbox" tabindex="0" class="time_label" value="8">
+                        <label style="width: 70px !important;">第八节</label>
+                    </div>
+                    <div class="ui checkbox">
+                        <input type="checkbox" tabindex="0" class="time_label" value="9">
+                        <label style="width: 70px !important;">第九节</label>
+                    </div>
+                    <div class="ui checkbox">
+                        <input type="checkbox" tabindex="0" class="time_label" value="10">
+                        <label style="width: 70px !important;">第十节</label>
+                    </div>
+                    <div class="ui checkbox">
+                        <input type="checkbox" tabindex="0" class="time_label" value="11">
+                        <label style="width: 83px !important;">第十一节</label>
+                    </div>
+                    <div class="ui checkbox">
+                        <input type="checkbox" tabindex="0" class="time_label" value="12">
+                        <label style="width: 83px !important;">第十二节</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="inline field">
             <label></label>
-            <button class="ui button ajax-post mini positive" id="submit" onclick="return false;"
-                    data-url="{:url('admin/Place/save')}">确定
+            <button class="ui button mini positive sub_time" id="submit" onclick="return false;">确定
             </button>
             <button class="ui button mini" onclick="history.back(-1);return false;">返回</button>
         </div>
@@ -32,7 +477,51 @@
 </block>
 <block name="script">
     <script>
+        $('.check_all').checkbox({
+            onChecked: function () {
+                var $childCheckbox = $(this).parent().parent().parent().find('.checkbox');
+                $childCheckbox.checkbox('check');
+            },
+            onUnchecked: function () {
+                $(this).parent().parent().parent().find('.checkbox').checkbox('uncheck');
+            }
+        });
+
         $(function () {
+            $('.sub_time').click(function () {
+                var times = [];
+                var week_id;
+                var this_obj;
+                $('.week_time').each(function () {
+                    this_obj = $(this);
+                    week_id = this_obj.attr('week-id');
+                    var i = 0;
+                    times[week_id] = [];
+                    this_obj.find('.time_label').each(function () {
+                        if ($(this).is(':checked')) {
+                            times[week_id][i] = $(this).val();
+                            i++;
+                        }
+                    });
+                });
+                var place_info = $('.place_info').val();
+                var place_type = $('select[name="place_type"]').val();
+                var place_name = $('.place_name').val();
+                $.ajax({
+                    url: "{:url('admin/Place/save')}",
+                    data: {'info': place_info,'type': place_type,'name': place_name,'times': times},
+                    method: 'post',
+                    dataType: 'json',
+                    success: function (data) {
+                        if (data.status == 1) {
+                            sAlert.success(data.info);
+                            history.go(-1);
+                        } else {
+                            sAlert.error(data.info);
+                        }
+                    }
+                })
+            });
             highlight_subnav("{:url('admin/Place/index')}");
         });
     </script>

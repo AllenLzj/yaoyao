@@ -65,6 +65,13 @@ Route::post('/admin/Announcement/save', 'admin/Announcement/save');
 Route::get('/admin/Announcement/edit', 'admin/Announcement/edit');
 Route::post('/admin/Announcement/update', 'admin/Announcement/update');
 
+//场地资源设置
+Route::get('/admin/Place/index', 'admin/Place/index');
+Route::get('/admin/Place/create', 'admin/Place/create');
+Route::post('/admin/Place/save', 'admin/Place/save');
+Route::get('/admin/Place/details', 'admin/Place/details');
+Route::post('/admin/Place/details_save', 'admin/Place/detailsSave');
+
 /**
  * app部分路由
  */

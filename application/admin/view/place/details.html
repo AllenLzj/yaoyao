@@ -1,0 +1,134 @@
+<extend name="common/layout"/>
+<block name="style">
+    <style>
+        .te_le label {
+            text-align: left !important;
+        }
+    </style>
+</block>
+<block name="main-top">
+    <form class="search-form" onkeydown="if(event.keyCode==13){return false;}">
+        <div class="ui action small input" id="search-input">
+            <input type="text" name="date" placeholder="请选择筛选日期" value="{$date}" class="search-input date">
+            <button class="ui button small blue" id="search" onclick="return false"
+                    url="{:url('admin/Place/details')}">搜索
+            </button>
+        </div>
+    </form>
+</block>
+<block name="main-body">
+    <form method="post" class="ui form mini">
+        <div class="inline field">
+            <label>可预约时间(当天)</label>
+        </div>
+        <div>
+            <div style="text-align: left !important;" class="te_le">
+                <div class="inline field">
+                    <label style="text-align: right !important;">{$week_text}</label>
+                    <div class="ui checkbox check_all">
+                        <input type="checkbox" tabindex="0">
+                        <label style="width: 90px !important;">全选</label>
+                    </div>
+                </div>
+                <volist name="$time_arr" id="t">
+                    <div class="inline field">
+                        <label></label>
+                        <div class="ui checkbox">
+                            <input type="checkbox" tabindex="0" class="time_label" value="{$key}"
+                            <if condition="$data[$key]['is_select'] eq 1">checked</if>
+                            >
+                            <label style="width: 160px !important;">
+                                {$t}
+                                <if condition="$data[$key]['status'] eq 1">&nbsp;&nbsp;&nbsp;(已被预约)</if>
+                            </label>
+                        </div>
+                    </div>
+
+                </volist>
+            </div>
+        </div>
+        <div class="inline field" style="margin:12px 0;text-align: center">
+            <button class="ui button mini blue sub_but" onclick="return false;">保存</button>
+            <button class="ui button mini close" onclick="history.go(-1);">返回</button>
+        </div>
+    </form>
+</block>
+
+<block name="script">
+    <link rel="stylesheet" type="text/css" href="__STATIC__/datetimepicker/css/datetimepicker.css" media="all">
+    <link rel="stylesheet" type="text/css" href="__STATIC__/datetimepicker/css/dropdown.css" media="all">
+    <script type="text/javascript" src="__STATIC__/datetimepicker/js/bootstrap-datetimepicker.min.js"></script>
+    <script type="text/javascript" src="__STATIC__/datetimepicker/js/locales/bootstrap-datetimepicker.zh-CN.js"
+            charset="UTF-8"></script>
+    <script type="text/javascript">
+        $('.date').datetimepicker({
+            language: 'zh-CN',
+            format: 'yyyy-mm-dd',
+            weekStart: 1,
+            autoclose: true,
+            startView: 2,
+            minView: 2,
+            forceParse: false,
+        });
+            //搜索功能
+            $("#search").click(function () {
+                var url = $(this).attr('url');
+                var query = $('.search-form').serialize();
+                query = query.replace(/(&|^)(\w*?\d*?\-*?_*?)*?=?((?=&)|(?=$))/g, '');
+                query = query.replace(/^&/g, '');
+                if (url.indexOf('?') > 0) {
+                    url += '&' + query;
+                } else {
+                    url += '?' + query;
+                }
+                url += '&id=' + "{:input('id')}";
+                window.location.href = url;
+            });
+            //回车搜索
+            $(".search-input").keyup(function (e) {
+                if (e.keyCode === 13) {
+                    $("#search").click();
+                    return false;
+                }
+            });
+
+        $('.check_all').checkbox({
+            onChecked: function () {
+                var $childCheckbox = $('.checkbox');
+                $childCheckbox.checkbox('check');
+            },
+            onUnchecked: function () {
+                $(this).parent().parent().parent().find('.checkbox').checkbox('uncheck');
+            }
+        });
+
+        $('.sub_but').click(function () {
+            var times = [];
+            var i = 0;
+            $('.time_label').each(function () {
+                if ($(this).is(':checked')) {
+                    times[i] = $(this).val();
+                    i++;
+                }
+            });
+            var id = "{:input('id')}";
+            var date = "{:input('date')}";
+            $.ajax({
+                url: "{:url('admin/Place/detailsSave')}",
+                data: {'id': id, 'date': date, 'times': times},
+                method: 'post',
+                dataType: 'json',
+                success: function (data) {
+                    if (data.status == 1) {
+                        sAlert.success(data.info);
+                        history.go(-1);
+                    } else {
+                        sAlert.error(data.info);
+                    }
+                }
+            })
+        })
+
+        highlight_subnav("{:url('admin/Place/index')}");
+    </script>
+</block>
