@@ -145,6 +145,7 @@ class Place extends Admin
     public function details()
     {
         $prm_date = input('date', null);
+        $id = input('id', null);
         $date = date('Y-m-d');
         if (!empty($prm_date)) $date = $prm_date;
         $week = date('w',strtotime($date));
@@ -171,7 +172,8 @@ class Place extends Admin
                 $week_text = '周日';
                 break;
         }
-        $place_data = db('place_time')->where('date', $date)->column('time,status');
+        $place_data = db('place_time')->where(['date'=>$date,'place_id'=>$id])->column('time,status');
+        $place_name = db('place')->where('id',$id)->value('name');
         $data = [];
         for ($i = 1; $i <= 12; $i++) {
             if (isset($place_data[$i])) {
@@ -203,7 +205,7 @@ class Place extends Admin
             '12'=>'第十二节',
         ];
         $this->assign('title', '场地资源详情');
-        return $this->fetch('', compact('title', 'data','week_text','time_arr','date'));
+        return $this->fetch('', compact('title', 'data','week_text','time_arr','date','place_name'));
     }
 
     //编辑当天空余时间

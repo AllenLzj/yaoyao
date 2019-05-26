@@ -104,7 +104,8 @@ Route::get('/V1/article_comment/:article_id', 'api/article/comment');//评论
 Route::get('/V1/del_article/:article_id', 'api/article/delArticle');//删除
 Route::get('/V1/upload_pictures', 'api/article/uploadPictures');//上传图片
 
-
+//场地
+Route::get('/V1/place_index', 'api/place/index');//场地列表
 
 
 
