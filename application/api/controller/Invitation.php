@@ -16,12 +16,16 @@ class Invitation extends ApiBase
    public function addInvitation(Request $request)
    {
        $prm = $request->only('type,title,info,site,time,user_num,academy_id,identity,name');
+       $time_ids = input('time_ids',null);
        $prm['user_id'] = input('user_id');
        $prm['create_time'] = date('Y-m-d H:i:s');
        // 启动事务
        Db::startTrans();
        try {
-           db('invitation')->insert($prm);
+           $invitation_id = db('invitation')->insertGetId($prm);
+           if(!empty($time_ids)){
+               db('place_time')->where('id','in',$time_ids)->update(['status'=>1,'invitation_id'=>$invitation_id]);
+           }
            // 提交事务
            Db::commit();
            return json_encode($this->mergeData());
@@ -64,6 +68,7 @@ class Invitation extends ApiBase
         if($is_join) $this->wrong(601, '已参与，无需重复参与');
         $data = db('invitation')->where('id',$prm['invitation_id'])->find();
         if($data['sign_up_num'] >= $data['user_num']) $this->wrong(603, '人数已满');
+        if($data['user_id'] == $data['user_id']) $this->wrong(603, '请勿加入本人发布的邀请');
 
 // 启动事务
         Db::startTrans();
@@ -130,6 +135,7 @@ class Invitation extends ApiBase
             ->join('invitation i','i.id=ui.invitation_id')
             ->join('academy a','a.id=i.academy_id')
             ->where(['ui.user_id'=>$user_id])
+            ->order('id desc')
             ->field('i.*,a.name academy_name')
             ->select();
         foreach ($data as &$vo){
@@ -147,6 +153,7 @@ class Invitation extends ApiBase
         $data = db('invitation')->alias('i')
             ->join('academy a','a.id=i.academy_id')
             ->where(['i.user_id'=>$user_id])
+            ->order('id desc')
             ->field('i.*,a.name academy_name')
             ->select();
         foreach ($data as &$vo){

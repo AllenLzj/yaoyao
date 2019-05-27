@@ -106,6 +106,8 @@ Route::get('/V1/upload_pictures', 'api/article/uploadPictures');//上传图片
 
 //场地
 Route::get('/V1/place_index', 'api/place/index');//场地列表
+Route::get('/V1/place_details', 'api/place/details');//场地列表
+Route::get('/V1/place_save', 'api/place/save');//场地列表
 
 
 

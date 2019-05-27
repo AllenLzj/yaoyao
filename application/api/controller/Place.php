@@ -53,30 +53,36 @@ class Place extends ApiBase
         return json_encode($this->mergeData($place_data));
     }
 
-    //点赞
-    public function like($user_id, $article_id)
+    //选择场地
+    public function details()
     {
-
-        $like = db('article_like')->where(['article_id'=>$article_id,'user_id'=>$user_id])->find();
-        // 启动事务
-        Db::startTrans();
-        try {
-            if(empty($like)){
-                db('article_like')->insert(['article_id'=>$article_id,'user_id'=>$user_id,'create_time'=>date('Y-m-d H:i:s')]);
-                db('article')->where('id',$article_id)->setInc('like_num',1);
-            }else{
-                db('article_like')->where(['article_id'=>$article_id,'user_id'=>$user_id])->delete();
-                db('article')->where('id',$article_id)->setDec('like_num',1);
-            }
-            // 提交事务
-            Db::commit();
-            return json_encode($this->mergeData());
-        } catch (\Exception $e) {
-            // 回滚事务
-            Db::rollback();
-            $this->wrong(603, $e->getMessage());
-        };
+        $id = input('id');
+        $user_id = input('user_id');
+        $date = input('date',date('Y-m-d'));
+        $data = db('place')->where('id',$id)->field('id,name,type')->find();
+        $data['time'] = db('place_time')->where(['place_id'=>$id,'date'=>$date,'status'=>0])->column('id,time');
+        $data['user_name'] = db('user')->where('id',$user_id)->value('name');
+        if($data['type'] == 1){
+            $data['type_text'] = '自习室';
+        }elseif ($data['type'] == 2){
+            $data['type_text'] = '运动场馆';
+        }else{
+            $data['type_text'] = '会议室';
+        }
+        return json_encode($this->mergeData($data));
     }
 
+    public function save()
+    {
+        $id = input('id');
+        $times = input('time');
+        $date = input('date',date('Y-m-d'));
+        $data = db('place')->where('id',$id)->field('id,name,type')->find();
+        $data['time_ids'] = db('place_time')->where(['place_id'=>$id,'date'=>$date,'time'=>['in',$times]])->column('id');
+        $data['time_ids'] = implode(',',$data['time_ids']);
+        $data['time_text'] = $date.'第'.$times.'节课';
+        return json_encode($this->mergeData($data));
+
+    }
 
 }
