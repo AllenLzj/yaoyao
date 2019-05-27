@@ -115,9 +115,11 @@ class Invitation extends ApiBase
         if(!empty($search)) $where['i.title|i.info'] = ['like', "%{$search}%"];
         $data = db('invitation')->alias('i')
             ->join('academy a','a.id=i.academy_id')
+            ->join('user u','u.id=i.user_id')
+            ->join('picture p','p.picture_id=u.icon')
             ->where($where)
             ->order('i.id desc')
-            ->field('i.*,a.name academy_name')
+            ->field('i.*,a.name academy_name,p.path')
             ->select();
         foreach ($data as &$vo){
             $vo['num_data'] = $vo['sign_up_num'].'/'.$vo['user_num'];
@@ -134,9 +136,11 @@ class Invitation extends ApiBase
         $data = db('user_invitation')->alias('ui')
             ->join('invitation i','i.id=ui.invitation_id')
             ->join('academy a','a.id=i.academy_id')
+            ->join('user u','u.id=i.user_id')
+            ->join('picture p','p.picture_id=u.icon')
             ->where(['ui.user_id'=>$user_id])
             ->order('id desc')
-            ->field('i.*,a.name academy_name')
+            ->field('i.*,a.name academy_name,p.path')
             ->select();
         foreach ($data as &$vo){
             $vo['num_data'] = $vo['sign_up_num'].'/'.$vo['user_num'];
@@ -152,9 +156,11 @@ class Invitation extends ApiBase
         $user_id = input('user_id');
         $data = db('invitation')->alias('i')
             ->join('academy a','a.id=i.academy_id')
+            ->join('user u','u.id=i.user_id')
+            ->join('picture p','p.picture_id=u.icon')
             ->where(['i.user_id'=>$user_id])
             ->order('id desc')
-            ->field('i.*,a.name academy_name')
+            ->field('i.*,a.name academy_name,p.path')
             ->select();
         foreach ($data as &$vo){
             $vo['num_data'] = $vo['sign_up_num'].'/'.$vo['user_num'];

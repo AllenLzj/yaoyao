@@ -31,6 +31,8 @@ class Article extends ApiBase
             ->group('ac.article_id')
             ->column('ac.article_id,ac.*,group_concat(u.id,":",ac.content) name_comment');
         foreach ($data as &$vo){
+            $vo['path']=$user_icon[$vo['user_id']]['path'];
+
             if(isset($likes[$vo['id']])){
                 $vo['is_like'] = 1;
             }else{
