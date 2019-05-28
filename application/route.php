@@ -109,6 +109,12 @@ Route::get('/V1/place_index', 'api/place/index');//场地列表
 Route::get('/V1/place_details', 'api/place/details');//场地列表
 Route::get('/V1/place_save', 'api/place/save');//场地列表
 
+//好友
+Route::get('/V1/friend_list', 'api/user/friendList');//好友列表
+Route::get('/V1/friend_add', 'api/user/addFriend');//好友添加
+Route::get('/V1/friend_del', 'api/user/delFriend');//好友删除
+Route::get('/V1/friend_is', 'api/user/isFriend');//是否是好友
+
 
 
 

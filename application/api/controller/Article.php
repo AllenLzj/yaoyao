@@ -16,8 +16,13 @@ class Article extends ApiBase
     public function index($user_id)
     {
         $type = input('type',1);
-        $where = ['type'=>$type];
-        $data = db('article')->where($where)->order('id desc')->select();
+        $where = ['a.type'=>$type];
+        $data = db('article')->alias('a')
+            ->join('user u','u.id=a.user_id')
+            ->where($where)
+            ->order('id desc')
+            ->field('u.name,a.*')
+            ->select();
         $article_ids = array_column($data,'id');
         $likes = db('article_like')->where(['user_id'=>$user_id])->column('article_id,id');
         $user_icon = db('user')->alias('u')

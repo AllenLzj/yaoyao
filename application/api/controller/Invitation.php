@@ -68,7 +68,7 @@ class Invitation extends ApiBase
         if($is_join) $this->wrong(601, '已参与，无需重复参与');
         $data = db('invitation')->where('id',$prm['invitation_id'])->find();
         if($data['sign_up_num'] >= $data['user_num']) $this->wrong(603, '人数已满');
-        if($data['user_id'] == $data['user_id']) $this->wrong(603, '请勿加入本人发布的邀请');
+        if($data['user_id'] == $prm['user_id']) $this->wrong(603, '请勿加入本人发布的邀请');
 
 // 启动事务
         Db::startTrans();
