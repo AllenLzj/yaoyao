@@ -106,7 +106,8 @@ class User extends ApiBase
                 ->field('u.id,u.name,u.sex,p.path')
                 ->find();
             $vo['name'] = $data_u['name'];
-            $vo['sex'] = $data_u['path'];
+            $vo['sex'] = $data_u['sex'];
+            $vo['path'] = $data_u['path'];
         }
 
         return json_encode($this->mergeData($data));
