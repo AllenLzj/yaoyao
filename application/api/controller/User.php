@@ -88,13 +88,27 @@ class User extends ApiBase
 
     public function friendList($user_id)
     {
-        $where['fu.user_id|fu.friend_user_id'] = $user_id;
+        $where['user_id|friend_user_id'] = $user_id;
         $data = db('friend_user')->alias('fu')
-            ->join('user u','u.id=fu.friend_user_id')
-            ->join('picture p','p.picture_id=u.icon')
             ->where($where)
-            ->field('u.id,u.name,u.sex,p.path')
+            ->field('user_id,friend_user_id')
             ->select();
+        foreach ($data as &$vo){
+            $where_a = [];
+            if($vo['user_id'] == $user_id){
+                $where_a['u.id'] = $vo['friend_user_id'];
+            }else{
+                $where_a['u.id'] = $vo['user_id'];
+            }
+            $data_u = db('user')->alias('u')
+            ->join('picture p','p.picture_id=u.icon')
+                ->where($where_a)
+                ->field('u.id,u.name,u.sex,p.path')
+                ->find();
+            $vo['name'] = $data_u['name'];
+            $vo['sex'] = $data_u['path'];
+        }
+
         return json_encode($this->mergeData($data));
     }
 
