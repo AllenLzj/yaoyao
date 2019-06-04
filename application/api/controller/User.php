@@ -88,20 +88,37 @@ class User extends ApiBase
 
     public function friendList($user_id)
     {
+        $where['user_id|friend_user_id'] = $user_id;
         $data = db('friend_user')->alias('fu')
-            ->join('user u','u.id=fu.friend_user_id')
-            ->join('picture p','p.picture_id=u.icon')
-            ->where('fu.user_id',$user_id)
-            ->field('u.id,u.name,u.sex,p.path')
+            ->where($where)
+            ->field('user_id,friend_user_id')
             ->select();
+        foreach ($data as &$vo){
+            $where_a = [];
+            if($vo['user_id'] == $user_id){
+                $where_a['u.id'] = $vo['friend_user_id'];
+            }else{
+                $where_a['u.id'] = $vo['user_id'];
+            }
+            $data_u = db('user')->alias('u')
+            ->join('picture p','p.picture_id=u.icon')
+                ->where($where_a)
+                ->field('u.id,u.name,u.sex,p.path')
+                ->find();
+            $vo['name'] = $data_u['name'];
+            $vo['sex'] = $data_u['sex'];
+            $vo['path'] = $data_u['path'];
+        }
+
         return json_encode($this->mergeData($data));
     }
 
     public function addFriend($user_id,$friend_user_id)
     {
         $is_friend = db('friend_user')->where(['user_id'=>$user_id,'friend_user_id'=>$friend_user_id])->find();
+        $is_friend1 = db('friend_user')->where(['user_id'=>$friend_user_id,'friend_user_id'=>$user_id])->find();
         $friend_user_name = db('user')->where('id',$user_id)->value('name');
-        if($is_friend) $this->wrong('401', '添加好友失败，'.$friend_user_name.'和您已经是好友关系');
+        if($is_friend || $is_friend1) $this->wrong('401', '添加好友失败，'.$friend_user_name.'和您已经是好友关系');
         if($user_id == $friend_user_id) $this->wrong('401', '添加好友失败');
         // 启动事务
         Db::startTrans();
@@ -120,12 +137,14 @@ class User extends ApiBase
     public function delFriend($user_id,$friend_user_id)
     {
         $is_friend = db('friend_user')->where(['user_id'=>$user_id,'friend_user_id'=>$friend_user_id])->find();
+        $is_friend1 = db('friend_user')->where(['user_id'=>$friend_user_id,'friend_user_id'=>$user_id])->find();
         $friend_user_name = db('user')->where('id',$user_id)->value('name');
-        if(empty($is_friend)) $this->wrong('401', '删除好友失败，'.$friend_user_name.'和您不是好友关系');
+        if(empty($is_friend) && empty($is_friend1)) $this->wrong('401', '删除好友失败，'.$friend_user_name.'和您不是好友关系');
         // 启动事务
         Db::startTrans();
         try {
             db('friend_user')->where(['user_id'=>$user_id,'friend_user_id'=>$friend_user_id])->delete();
+            db('friend_user')->where(['friend_user_id'=>$user_id,'user_id'=>$friend_user_id])->delete();
             // 提交事务
             Db::commit();
             return json_encode($this->mergeData());
@@ -139,8 +158,9 @@ class User extends ApiBase
     public function isFriend($user_id,$friend_user_id)
     {
         $data = db('friend_user')->where(['user_id' => $user_id, 'friend_user_id' => $friend_user_id])->find();
+        $data1 = db('friend_user')->where(['user_id' => $friend_user_id, 'friend_user_id' => $user_id])->find();
         $is_friend['is_friend'] = 0;
-        if ($data) $is_friend['is_friend'] = 1;
+        if ($data || $data1) $is_friend['is_friend'] = 1;
         return json_encode($this->mergeData($is_friend));
 
         // 启动事务
